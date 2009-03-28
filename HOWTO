@@ -1,0 +1,7 @@
+make images:
+- copy rect from svg map
+- paste into new image with transparent background
+- Image->autocrop
+- Colors->Auto->White Balance
+- Colors->Color to Alpha
+- save

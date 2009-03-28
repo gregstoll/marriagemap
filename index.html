@@ -193,6 +193,7 @@ var stateLabelPaths = [
     "M 798.14612,208.10171 L 835.02245,263.10369",
     "M 907.41549,437.76899 L 792.80457,385.48966"
 ];
+var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,723.74902 M -15,562.99783 L 161.86786,563.31033 L 229.52462,631.59209 L 314.68151,631.74834 L 370.43191,685.18624 L 370.11941,723.43652";
     var statenamepositions = {
         'CA': [64.585464, 442.67908],
         'OR': [86.461258, 274.54803],
@@ -255,7 +256,7 @@ var stateLabelPaths = [
         translation = scalePoint([-43.12533, -131.9412]);
         translation = scalePoint([0, -131.9412]);
         //alert('state: ' + state + ', translation ' + translation);
-        drawSvgPath(stateData[state], translation, color, 2);
+        drawSvgPath(stateData[state], translation, color, 1);
     }
     function drawStateName(stateName) {
         var im = new Image();
@@ -266,7 +267,6 @@ var stateLabelPaths = [
             //alert('drawing at ' + point);
             ctx.save();
             ctx.translate(translation[0], translation[1]);
-            //ctx.scale(800.0/958.69, 800.0/958.69);
             ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
             ctx.restore();
         }
@@ -280,7 +280,7 @@ var stateLabelPaths = [
         // Scale it.
         return scalePoint(tempPoint);
     }
-    function drawSvgPath(data, translation, color, width) {
+    function drawSvgPath(data, translation, color, width, skipFill) {
         var commands = data.split(' ');
         var index = 0;
         var curPoint = [0,0];
@@ -326,7 +326,9 @@ var stateLabelPaths = [
                     // TODO - filling, stuff go here.
                     ctx.closePath();
                     ctx.stroke();
-                    ctx.fill();
+                    if (!skipFill) {
+                        ctx.fill();
+                    }
                     ctx.beginPath();
                     break;
                 case '':
@@ -338,12 +340,14 @@ var stateLabelPaths = [
             }
         }
         ctx.stroke();
-        ctx.fill();
+        if (!skipFill) {
+            ctx.fill();
+        }
         ctx.restore();
     }
     function drawMap() {
         for (var stateName in stateData) {
-            drawState(stateName);
+            drawState(stateName, 'white');
         }
         for (var stateName in statenamepositions) {
             drawStateName(stateName);
@@ -352,13 +356,12 @@ var stateLabelPaths = [
         for (var i = 0; i < stateLabelPaths.length; ++i) {
             drawSvgPath(stateLabelPaths[i], translation, "black", .5);
         }
+        translation[0] += 10;
+        drawSvgPath(insetBox, translation, "black", 1, true);
     }
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
-        //mapImage = new Image();
-        //$(mapImage).load(imageLoaded);
-        //mapImage.src = 'svg/largemap.png';
         // TODO - click handler?
         //canvas.addEventListener('mouseup', ev_canvas, false);
         drawMap();

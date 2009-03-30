@@ -193,8 +193,6 @@ if (!Array.prototype.map)
             return;
         }
 
-
-        // TODO - clear map?
         var changedStates = [];
         for (var stateName in stateSvgPaths) {
             var newStatus = getStateStatus(stateName, newYear);
@@ -205,9 +203,7 @@ if (!Array.prototype.map)
             }
         }
         for (var i in changedStates) {
-            if (!(changedStates[i] in statenamesoutsideofstate)) {
-                drawStateName(changedStates[i]);
-            }
+            drawStateName(changedStates[i]);
         }
         var translation = scalePoint([0, -131.9412]);
         for (var i = 0; i < stateLabelPaths.length; ++i) {
@@ -258,6 +254,7 @@ if (!Array.prototype.map)
 
         slider = YAHOO.widget.Slider.getHorizSlider(bg, 
                          thumb, topConstraint, bottomConstraint, 8);
+        slider.tickPause = 30;
 
         // Sliders with ticks can be animated without YAHOO.util.Anim
         slider.animate = true;

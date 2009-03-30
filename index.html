@@ -26,14 +26,14 @@
          border: medium none;
      }
      #slider-bg {
-         width: 580px;
+         width: 636px;
          height: 30px;
      }
      #slider-bg img.slider-background {
          left: 0px;
          top: 0px;
          position: absolute;
-         width: 580px;
+         width: 636px;
          height: 28px;
          z-index: -1;
      }
@@ -170,30 +170,28 @@ if (!Array.prototype.map)
         var stateMarriageData = marriagedata[stateName];
         for (var i = 0; i < stateMarriageData.length; ++i) {
             var testYear = stateMarriageData[i][0].split('-').map(function(x) { return parseInt(x, 10);});
-            if (testYear < year) {
+            if (testYear[0] < year[0] || (testYear[0] == year[0] && testYear[1] <= year[1])) {
                 status = stateMarriageData[i][1];
+            } else {
+                // Assumes the marriage data is in sorted order.
+                break;
             }
         }
         return status;
     }
     var numberOfDrawsDone = 0;
     function redrawMap(newYear) {
-        ++numberOfDrawsDone;
-        // A full redraw looks better but is slow.  So only do it every 10
-        // draws or so.
-        if (numberOfDrawsDone % 10 == 0) {
-            // let's try full redraw.
-            // this is quite slow
-            for (var stateName in stateSvgPaths) {
-                var newStatus = getStateStatus(stateName, newYear);
-                currentMapStatus[stateName] = newStatus;
-            }
-            clearMap();
-            drawMap();
-            return;
+        // A full redraw looks better, and is fast enough.
+        // let's try full redraw.
+        for (var stateName in stateSvgPaths) {
+            var newStatus = getStateStatus(stateName, newYear);
+            currentMapStatus[stateName] = newStatus;
         }
+        clearMap();
+        drawMap();
+        return;
 
-        var changedStates = [];
+        /*var changedStates = [];
         for (var stateName in stateSvgPaths) {
             var newStatus = getStateStatus(stateName, newYear);
             if (newStatus != currentMapStatus[stateName]) {
@@ -208,7 +206,7 @@ if (!Array.prototype.map)
         var translation = scalePoint([0, -131.9412]);
         for (var i = 0; i < stateLabelPaths.length; ++i) {
             drawSvgPath(stateLabelPaths[i], translation, "black", .5);
-        }
+        }*/
     }
     function clearMap() {
         ctx.clearRect(0, 0, document.getElementById('mapCanvas').width, document.getElementById('mapCanvas').height);
@@ -241,7 +239,7 @@ if (!Array.prototype.map)
         var topConstraint = 0;
 
         // The slider can move 400 pixels down
-        var bottomConstraint = 560;
+        var bottomConstraint = 618;
 
         // Custom scale factor for converting the pixel offset into a real value
         var scaleFactor = 1.5;
@@ -260,15 +258,27 @@ if (!Array.prototype.map)
         slider.animate = true;
 
         slider.getRealValue = function() {
-            var baseYear = 1975;
+            var baseYear = 1990;
             var realValue = Math.round(this.getValue() / 8.0);
-            return [baseYear + Math.floor(realValue/2), (realValue % 2) * 6 + 6];
+            return [baseYear + Math.floor(realValue/4), (realValue % 4) * 3 + 3];
         }
         slider.subscribe("change", function(offsetFromStart) {
             // use the scale factor to convert the pixel offset into a real
             // value
             var actualValue = slider.getRealValue();
-            var printedValue = (actualValue[1] == 6 ? 'Jan-Jun' : 'Jul-Dec') + ' ' + actualValue[0];
+            var monthNames = 'Jan-Mar';
+            switch (actualValue[1]) {
+                case 6:
+                    monthNames = 'Apr-Jun';
+                    break;
+                case 9:
+                    monthNames = 'Jul-Sep';
+                    break;
+                case 12:
+                    monthNames = 'Oct-Dec';
+                    break;
+            }
+            var printedValue = monthNames + ' ' + actualValue[0];
             $('#slider-value').html(printedValue);
 
             // Update the title attribute on the background.  This helps assistive

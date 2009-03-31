@@ -1,59 +1,59 @@
-<area href="http://commons.wikimedia.org/wiki/Alabama" shape="poly" coords="536,310,556,376,518,382,518,394,506,390,504,312" alt="Alabama" title="Alabama" />
-<area href="http://commons.wikimedia.org/wiki/Alaska" shape="poly" coords="126,382,128,450,148,456,170,480,170,492,152,490,132,462,98,456,84,472,10,482,56,456,34,432,44,392,60,374,90,364" alt="Alaska" title="Alaska" />
-<area href="http://commons.wikimedia.org/wiki/Arizona" shape="poly" coords="110,330,158,362,190,368,204,270,134,258,130,272,124,272,116,290,126,304" alt="Arizona" title="Arizona" />
-<area href="http://commons.wikimedia.org/wiki/Arkansas" shape="poly" coords="408,288,408,336,416,350,460,350,472,310,478,294,466,290" alt="Arkansas" title="Arkansas" />
-<area href="http://commons.wikimedia.org/wiki/California" shape="poly" coords="22,136,76,150,60,202,116,282,116,288,124,302,112,328,76,324,34,278,10,162" alt="California" title="California" />
-<area href="http://commons.wikimedia.org/wiki/Colorado" shape="poly" coords="214,196,308,206,304,276,206,266" alt="Colorado" title="Colorado" />
-<area href="http://commons.wikimedia.org/wiki/Connecticut" shape="poly" coords="682,154,682,172,704,162,702,150" alt="Connecticut" title="Connecticut" />
-<area href="http://commons.wikimedia.org/wiki/Delaware" shape="poly" coords="662,200,666,226,678,226,674,212" alt="Delaware" title="Delaware" />
-<area href="http://commons.wikimedia.org/wiki/Florida" shape="poly" coords="610,378,648,454,632,486,616,486,596,434,574,394,552,404,520,392,520,384,556,378,556,384" alt="Florida" title="Florida" />
-<area href="http://commons.wikimedia.org/wiki/Georgia_(U.S._state)" shape="poly" coords="536,306,572,304,614,348,608,380,556,382" alt="Georgia" title="Georgia" />
-<area href="http://commons.wikimedia.org/wiki/Hawaii" shape="poly" coords="182,422,180,460,216,490,282,492,286,464,244,424" alt="Hawaii" title="Hawaii" />
-<area href="http://commons.wikimedia.org/wiki/Idaho" shape="poly" coords="140,40,128,90,134,96,120,116,114,158,188,172,196,130,172,128,166,106,158,110,160,88,146,60,152,42" alt="Idaho" title="Idaho" />
-<area href="http://commons.wikimedia.org/wiki/Illinois" shape="poly" coords="462,184,450,220,470,242,466,254,486,276,496,274,504,242,502,190,492,174,460,180" alt="Illinois" title="Illinois" />
-<area href="http://commons.wikimedia.org/wiki/Indiana" shape="poly" coords="502,190,502,260,526,254,542,236,536,186" alt="Indiana" title="Indiana" />
-<area href="http://commons.wikimedia.org/wiki/Iowa" shape="poly" coords="384,164,378,180,392,216,446,216,454,204,462,188,450,166" alt="Iowa" title="Iowa" />
-<area href="http://commons.wikimedia.org/wiki/Kansas" shape="poly" coords="306,224,300,278,406,280,406,242,402,238,404,230,392,224" alt="Kansas" title="Kansas" />
-<area href="http://commons.wikimedia.org/wiki/Kentucky" shape="poly" coords="484,286,564,276,582,258,568,240,544,234,528,258,502,260" alt="Kentucky" title="Kentucky" />
-<area href="http://commons.wikimedia.org/wiki/Louisiana" shape="poly" coords="420,406,426,382,416,366,418,352,462,352,462,362,456,384,478,384,488,396,494,416,456,420" alt="Louisiana" title="Louisiana" />
-<area href="http://commons.wikimedia.org/wiki/Maine" shape="poly" coords="698,92,708,124,712,130,748,88,740,74,728,50,708,46" alt="Maine" title="Maine" />
-<area href="http://commons.wikimedia.org/wiki/Maryland" shape="poly" coords="610,210,610,220,630,212,648,222,648,230,658,232,666,246,676,224,664,224,662,202" alt="Maryland" title="Maryland" />
-<area href="http://commons.wikimedia.org/wiki/Massachusetts" shape="poly" coords="680,142,682,156,708,150,714,156,732,158,732,142,712,134" alt="Massachusetts" title="Massachusetts" />
-<area href="http://commons.wikimedia.org/wiki/Michigan" shape="poly" coords="454,96,462,110,496,124,512,186,554,182,562,160,540,106,484,70" alt="Michigan" title="Michigan" />
-<area href="http://commons.wikimedia.org/wiki/Minnesota" shape="poly" coords="374,66,380,120,378,122,384,130,384,164,452,164,452,156,428,140,426,126,434,106,464,80,402,72,398,60" alt="Minnesota" title="Minnesota" />
-<area href="http://commons.wikimedia.org/wiki/Mississippi" shape="poly" coords="474,314,502,310,506,394,488,394,478,382,456,382,464,356,462,346" alt="Mississippi" title="Mississippi" />
-<area href="http://commons.wikimedia.org/wiki/Missouri" shape="poly" coords="392,216,392,224,406,240,406,288,472,286,468,294,476,294,486,278,466,254,468,246,446,218" alt="Missouri" title="Missouri" />
-<area href="http://commons.wikimedia.org/wiki/Montana" shape="poly" coords="154,40,150,58,162,86,158,106,166,102,174,126,196,128,198,122,286,132,292,62" alt="Montana" title="Montana" />
-<area href="http://commons.wikimedia.org/wiki/Nebraska" shape="poly" coords="284,170,280,204,306,206,306,220,396,224,384,180,356,174" alt="Nebraska" title="Nebraska" />
-<area href="http://commons.wikimedia.org/wiki/Nevada" shape="poly" coords="76,152,150,166,130,270,122,270,118,286,60,204" alt="Nevada" title="Nevada" />
-<area href="http://commons.wikimedia.org/wiki/New_Hampshire" shape="poly" coords="692,96,688,140,710,134,696,90" alt="New Hampshire" title="New Hampshire" />
-<area href="http://commons.wikimedia.org/wiki/New_Jersey" shape="poly" coords="668,172,666,188,672,192,664,200,674,212,686,186,680,182,680,176" alt="New Jersey" title="New Jersey" />
-<area href="http://commons.wikimedia.org/wiki/New_Mexico" shape="poly" coords="204,266,290,276,280,364,204,360,202,370,188,366" alt="New Mexico" title="New Mexico" />
-<area href="http://commons.wikimedia.org/wiki/New_York" shape="poly" coords="606,148,596,170,658,158,666,170,680,174,680,180,686,184,706,168,684,170,682,154,682,140,670,104,648,106,628,138" alt="New York" title="New York" />
-<area href="http://commons.wikimedia.org/wiki/North_Carolina" shape="poly" coords="588,274,556,306,596,298,624,300,640,312,682,278,670,258" alt="North Carolina" title="North Carolina" />
-<area href="http://commons.wikimedia.org/wiki/North_Dakota" shape="poly" coords="292,64,288,116,380,120,372,66" alt="North Dakota" title="North Dakota" />
-<area href="http://commons.wikimedia.org/wiki/Ohio" shape="poly" coords="544,234,566,238,572,244,596,202,592,178,562,186,552,184,538,186,542,230" alt="Ohio" title="Ohio" />
-<area href="http://commons.wikimedia.org/wiki/Oklahoma" shape="poly" coords="290,276,406,280,412,340,358,332,332,324,332,290,288,288" alt="Oklahoma" title="Oklahoma" />
-<area href="http://commons.wikimedia.org/wiki/Oregon" shape="poly" coords="50,66,22,120,22,136,114,156,118,114,130,98,126,86,82,86,60,80,60,70" alt="Oregon" title="Oregon" />
-<area href="http://commons.wikimedia.org/wiki/Pennsylvania" shape="poly" coords="590,176,596,212,660,200,670,192,664,186,666,170,658,160" alt="Pennsylvania" title="Pennsylvania" />
-<area href="http://commons.wikimedia.org/wiki/Rhode_Island" shape="poly" coords="708,150,712,156,706,162,702,152" alt="Rhode Island" title="Rhode Island" />
-<area href="http://commons.wikimedia.org/wiki/South_Carolina" shape="poly" coords="572,302,616,348,638,314,624,300,596,296" alt="South Carolina" title="South Carolina" />
-<area href="http://commons.wikimedia.org/wiki/South_Dakota" shape="poly" coords="288,116,380,120,376,124,382,130,382,162,380,178,354,172,312,168,284,168,286,152,286,134" alt="South Dakota" title="South Dakota" />
-<area href="http://commons.wikimedia.org/wiki/Tennessee" shape="poly" coords="474,312,556,306,588,272,480,286" alt="Tennessee" title="Tennessee" />
-<area href="http://commons.wikimedia.org/wiki/Texas" shape="poly" coords="288,286,280,366,228,360,256,404,276,418,290,404,306,406,340,466,366,476,366,444,422,408,426,382,416,344,402,336,332,324,330,288" alt="Texas" title="Texas" />
-<area href="http://commons.wikimedia.org/wiki/Utah" shape="poly" coords="152,168,190,174,186,194,214,196,204,268,136,256" alt="Utah" title="Utah" />
-<area href="http://commons.wikimedia.org/wiki/Vermont" shape="poly" coords="670,102,680,140,688,140,690,100" alt="Vermont" title="Vermont" />
-<area href="http://commons.wikimedia.org/wiki/Virginia" shape="poly" coords="582,258,564,276,670,256,658,234,646,230,648,222,638,216,628,216,610,230,606,254" alt="Virginia" title="Virginia" />
-<area href="http://commons.wikimedia.org/wiki/Washington" shape="poly" coords="48,64,60,70,60,80,92,86,132,90,140,40,74,20,50,28" alt="Washington" title="Washington" />
-<area href="http://commons.wikimedia.org/wiki/West_Virginia" shape="poly" coords="636,216,628,216,620,232,610,230,606,248,598,256,584,260,574,248,578,230,592,218,594,200,596,214,612,212,612,218,628,210,634,212" alt="West Virginia" title="West Virginia" />
-<area href="http://commons.wikimedia.org/wiki/Wisconsin" shape="poly" coords="436,108,434,116,428,122,428,140,448,154,450,176,458,180,494,176,500,130,494,128,488,120,456,106,448,100" alt="Wisconsin" title="Wisconsin" />
-<area href="http://commons.wikimedia.org/wiki/Wyoming" shape="poly" coords="200,124,186,194,280,204,286,130" alt="Wyoming" title="Wyoming" />
-<area href="http://commons.wikimedia.org/wiki/Delaware" shape="rect" coords="736,226,794,242" alt="Delaware" title="Delaware" />
-<area href="http://commons.wikimedia.org/wiki/Maryland" shape="rect" coords="736,242,792,262" alt="Maryland" title="Maryland" />
-<area href="http://commons.wikimedia.org/wiki/New_Hampshire" shape="rect" coords="562,28,654,50" alt="New Hampshire" title="New Hampshire" />
-<area href="http://commons.wikimedia.org/wiki/New_Jersey" shape="rect" coords="722,204,792,224" alt="New Jersey" title="New Jersey" />
-<area href="http://commons.wikimedia.org/wiki/Massachusetts" shape="rect" coords="566,74,646,94" alt="Massachusetts" title="Massachusetts" />
-<area href="http://commons.wikimedia.org/wiki/Connecticut" shape="rect" coords="726,186,796,202" alt="Connecticut" title="Connecticut" />
-<area href="http://commons.wikimedia.org/wiki/West_Virginia" shape="rect" coords="716,284,794,300" alt="West Virginia" title="West Virginia" />
-<area href="http://commons.wikimedia.org/wiki/Vermont" shape="rect" coords="606,52,650,72" alt="Vermont" title="Vermont" />
-<area href="http://commons.wikimedia.org/wiki/Rhode_Island" shape="rect" coords="720,162,796,184" alt="Rhode Island" title="Rhode Island" /></map><img alt="" src="http://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Map_of_USA_with_state_names.svg/400px-Map_of_USA_with_state_names.svg.png" width="400" height="247" border="0" usemap="#ImageMap_1_445388174" />
+<area href="#AL" shape="poly" coords="536,310,556,376,518,382,518,394,506,390,504,312" alt="Alabama" title="Alabama" />
+<area href="#AK" shape="poly" coords="126,382,128,450,148,456,170,480,170,492,152,490,132,462,98,456,84,472,10,482,56,456,34,432,44,392,60,374,90,364" alt="Alaska" title="Alaska" />
+<area href="#AZ" shape="poly" coords="110,330,158,362,190,368,204,270,134,258,130,272,124,272,116,290,126,304" alt="Arizona" title="Arizona" />
+<area href="#AR" shape="poly" coords="408,288,408,336,416,350,460,350,472,310,478,294,466,290" alt="Arkansas" title="Arkansas" />
+<area href="#CA" shape="poly" coords="22,136,76,150,60,202,116,282,116,288,124,302,112,328,76,324,34,278,10,162" alt="California" title="California" />
+<area href="#CO" shape="poly" coords="214,196,308,206,304,276,206,266" alt="Colorado" title="Colorado" />
+<area href="#CT" shape="poly" coords="682,154,682,172,704,162,702,150" alt="Connecticut" title="Connecticut" />
+<area href="#DE" shape="poly" coords="662,200,666,226,678,226,674,212" alt="Delaware" title="Delaware" />
+<area href="#FL" shape="poly" coords="610,378,648,454,632,486,616,486,596,434,574,394,552,404,520,392,520,384,556,378,556,384" alt="Florida" title="Florida" />
+<area href="#GA" shape="poly" coords="536,306,572,304,614,348,608,380,556,382" alt="Georgia" title="Georgia" />
+<area href="#HI" shape="poly" coords="182,422,180,460,216,490,282,492,286,464,244,424" alt="Hawaii" title="Hawaii" />
+<area href="#ID" shape="poly" coords="140,40,128,90,134,96,120,116,114,158,188,172,196,130,172,128,166,106,158,110,160,88,146,60,152,42" alt="Idaho" title="Idaho" />
+<area href="#IL" shape="poly" coords="462,184,450,220,470,242,466,254,486,276,496,274,504,242,502,190,492,174,460,180" alt="Illinois" title="Illinois" />
+<area href="#IN" shape="poly" coords="502,190,502,260,526,254,542,236,536,186" alt="Indiana" title="Indiana" />
+<area href="#IA" shape="poly" coords="384,164,378,180,392,216,446,216,454,204,462,188,450,166" alt="Iowa" title="Iowa" />
+<area href="#KS" shape="poly" coords="306,224,300,278,406,280,406,242,402,238,404,230,392,224" alt="Kansas" title="Kansas" />
+<area href="#KY" shape="poly" coords="484,286,564,276,582,258,568,240,544,234,528,258,502,260" alt="Kentucky" title="Kentucky" />
+<area href="#LA" shape="poly" coords="420,406,426,382,416,366,418,352,462,352,462,362,456,384,478,384,488,396,494,416,456,420" alt="Louisiana" title="Louisiana" />
+<area href="#ME" shape="poly" coords="698,92,708,124,712,130,748,88,740,74,728,50,708,46" alt="Maine" title="Maine" />
+<area href="#MD" shape="poly" coords="610,210,610,220,630,212,648,222,648,230,658,232,666,246,676,224,664,224,662,202" alt="Maryland" title="Maryland" />
+<area href="#MA" shape="poly" coords="680,142,682,156,708,150,714,156,732,158,732,142,712,134" alt="Massachusetts" title="Massachusetts" />
+<area href="#MI" shape="poly" coords="454,96,462,110,496,124,512,186,554,182,562,160,540,106,484,70" alt="Michigan" title="Michigan" />
+<area href="#MN" shape="poly" coords="374,66,380,120,378,122,384,130,384,164,452,164,452,156,428,140,426,126,434,106,464,80,402,72,398,60" alt="Minnesota" title="Minnesota" />
+<area href="#MS" shape="poly" coords="474,314,502,310,506,394,488,394,478,382,456,382,464,356,462,346" alt="Mississippi" title="Mississippi" />
+<area href="#MO" shape="poly" coords="392,216,392,224,406,240,406,288,472,286,468,294,476,294,486,278,466,254,468,246,446,218" alt="Missouri" title="Missouri" />
+<area href="#MT" shape="poly" coords="154,40,150,58,162,86,158,106,166,102,174,126,196,128,198,122,286,132,292,62" alt="Montana" title="Montana" />
+<area href="#NE" shape="poly" coords="284,170,280,204,306,206,306,220,396,224,384,180,356,174" alt="Nebraska" title="Nebraska" />
+<area href="#NV" shape="poly" coords="76,152,150,166,130,270,122,270,118,286,60,204" alt="Nevada" title="Nevada" />
+<area href="#NH" shape="poly" coords="692,96,688,140,710,134,696,90" alt="New Hampshire" title="New Hampshire" />
+<area href="#NJ" shape="poly" coords="668,172,666,188,672,192,664,200,674,212,686,186,680,182,680,176" alt="New Jersey" title="New Jersey" />
+<area href="#NM" shape="poly" coords="204,266,290,276,280,364,204,360,202,370,188,366" alt="New Mexico" title="New Mexico" />
+<area href="#NY" shape="poly" coords="606,148,596,170,658,158,666,170,680,174,680,180,686,184,706,168,684,170,682,154,682,140,670,104,648,106,628,138" alt="New York" title="New York" />
+<area href="#NC" shape="poly" coords="588,274,556,306,596,298,624,300,640,312,682,278,670,258" alt="North Carolina" title="North Carolina" />
+<area href="#ND" shape="poly" coords="292,64,288,116,380,120,372,66" alt="North Dakota" title="North Dakota" />
+<area href="#OH" shape="poly" coords="544,234,566,238,572,244,596,202,592,178,562,186,552,184,538,186,542,230" alt="Ohio" title="Ohio" />
+<area href="#OK" shape="poly" coords="290,276,406,280,412,340,358,332,332,324,332,290,288,288" alt="Oklahoma" title="Oklahoma" />
+<area href="#OR" shape="poly" coords="50,66,22,120,22,136,114,156,118,114,130,98,126,86,82,86,60,80,60,70" alt="Oregon" title="Oregon" />
+<area href="#PA" shape="poly" coords="590,176,596,212,660,200,670,192,664,186,666,170,658,160" alt="Pennsylvania" title="Pennsylvania" />
+<area href="#RI" shape="poly" coords="708,150,712,156,706,162,702,152" alt="Rhode Island" title="Rhode Island" />
+<area href="#SC" shape="poly" coords="572,302,616,348,638,314,624,300,596,296" alt="South Carolina" title="South Carolina" />
+<area href="#SD" shape="poly" coords="288,116,380,120,376,124,382,130,382,162,380,178,354,172,312,168,284,168,286,152,286,134" alt="South Dakota" title="South Dakota" />
+<area href="#TN" shape="poly" coords="474,312,556,306,588,272,480,286" alt="Tennessee" title="Tennessee" />
+<area href="#TX" shape="poly" coords="288,286,280,366,228,360,256,404,276,418,290,404,306,406,340,466,366,476,366,444,422,408,426,382,416,344,402,336,332,324,330,288" alt="Texas" title="Texas" />
+<area href="#UT" shape="poly" coords="152,168,190,174,186,194,214,196,204,268,136,256" alt="Utah" title="Utah" />
+<area href="#VT" shape="poly" coords="670,102,680,140,688,140,690,100" alt="Vermont" title="Vermont" />
+<area href="#VA" shape="poly" coords="582,258,564,276,670,256,658,234,646,230,648,222,638,216,628,216,610,230,606,254" alt="Virginia" title="Virginia" />
+<area href="#WA" shape="poly" coords="48,64,60,70,60,80,92,86,132,90,140,40,74,20,50,28" alt="Washington" title="Washington" />
+<area href="#WV" shape="poly" coords="636,216,628,216,620,232,610,230,606,248,598,256,584,260,574,248,578,230,592,218,594,200,596,214,612,212,612,218,628,210,634,212" alt="West Virginia" title="West Virginia" />
+<area href="#WI" shape="poly" coords="436,108,434,116,428,122,428,140,448,154,450,176,458,180,494,176,500,130,494,128,488,120,456,106,448,100" alt="Wisconsin" title="Wisconsin" />
+<area href="#WY" shape="poly" coords="200,124,186,194,280,204,286,130" alt="Wyoming" title="Wyoming" />
+<area href="#DE" shape="rect" coords="736,226,794,242" alt="Delaware" title="Delaware" />
+<area href="#MD" shape="rect" coords="736,242,792,262" alt="Maryland" title="Maryland" />
+<area href="#NH" shape="rect" coords="562,28,654,50" alt="New Hampshire" title="New Hampshire" />
+<area href="#NJ" shape="rect" coords="722,204,792,224" alt="New Jersey" title="New Jersey" />
+<area href="#MA" shape="rect" coords="566,74,646,94" alt="Massachusetts" title="Massachusetts" />
+<area href="#CT" shape="rect" coords="726,186,796,202" alt="Connecticut" title="Connecticut" />
+<area href="#WV" shape="rect" coords="716,284,794,300" alt="West Virginia" title="West Virginia" />
+<area href="#VT" shape="rect" coords="606,52,650,72" alt="Vermont" title="Vermont" />
+<area href="#RI" shape="rect" coords="720,162,796,184" alt="Rhode Island" title="Rhode Island" />

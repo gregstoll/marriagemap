@@ -4,7 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <title>Same-sex marriage status in the United States</title>
-<!--[if IE]><script type="text/javascript" src="excanvas.js"></script><![endif]-->
+  <script type="text/javascript">
+      var isIE = false;
+  </script>
+  <!--[if IE]><script type="text/javascript" src="excanvas.js"></script>
+  <script type="text/javascript">
+      isIE = true;
+  </script>
+  <![endif]-->
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.1/jquery.min.js" type="text/javascript"></script>
   <!-- Combo-handled YUI CSS files: -->
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/slider/assets/skins/sam/slider.css">
@@ -142,7 +149,7 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
 <li><b>Are the source files available?</b> Yes - aside from the Javascript on this page, the other files are <a href="marriagedata.js.txt">marriagedata.js</a>, which contains all of the same-sex marriage data, and <a href="mapdata.js.txt">mapdata.js</a> which contains most of the drawing logic.</li>
         </ul>
         <p>Map colors based on <a href="http://www.ColorBrewer.org">www.ColorBrewer.org</a>, by Cynthia A. Brewer, Penn State.</p>
-  <script type="application/x-javascript">
+  <script type="text/javascript">
     var mapTypes = ['Mar', 'CU', 'CULite', 'None', 'NoMar', 'NoCU', 'NoMarConst', 'NoCUConst'];
     var mapColors = {
         'Mar': 'rgb(26, 152, 80)',
@@ -276,6 +283,7 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
             drawStateName(stateName);
         }
         var translation = scalePoint([0, -131.9412]);
+        //var translation = scalePoint([-43.12533, -131.9412]);
         for (var i = 0; i < stateLabelPaths.length; ++i) {
             drawSvgPath(stateLabelPaths[i], translation, "black", .5);
         }
@@ -286,14 +294,28 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
             legendImage.onload = function() {
                 ctx.save();
                 ctx.translate(translation[0], translation[1]);
-                ctx.drawImage(legendImage, 810*(800.0/958.69), 600*(800.0/958.69), legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
+                var legendX = 810*(800.0/958.69);
+                var legendY = 600*(800.0/958.69);
+                if (isIE) {
+                    // TODO - why?
+                    legendX *= .912;
+                    legendY *= .93;
+                }
+                ctx.drawImage(legendImage, legendX, legendY, legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
                 ctx.restore();
             };
             legendImage.src = 'images/legend.png';
         } else {
             ctx.save();
             ctx.translate(translation[0], translation[1]);
-            ctx.drawImage(legendImage, 810*(800.0/958.69), 600*(800.0/958.69), legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
+            var legendX = 810*(800.0/958.69);
+            var legendY = 600*(800.0/958.69);
+            if (isIE) {
+                // TODO - why?
+                legendX *= .912;
+                legendY *= .93;
+            }
+            ctx.drawImage(legendImage, legendX, legendY, legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
             ctx.restore();
         }
         // Draw the color boxes for the legend.
@@ -313,6 +335,8 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
     function goToDate(year, month) {
         slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/(12/monthGroupsPerYear))), true);
     }
+    // IE canvas is slower, so make animation faster.
+    var animationTimeout = isIE ? 50: 150;
     function advanceYear() {
         if (stopAnimating) {
             // Stop, and reset the flag.
@@ -320,14 +344,14 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
         } else {
             slider.setValue(slider.getValue() + pixelsPerMonthGroup);
             if (slider.getValue() + pixelsPerMonthGroup < maxSliderValue) {
-                setTimeout(advanceYear, 150);
+                setTimeout(advanceYear, animationTimeout);
             }
         }
     }
     var stopAnimating = false;
     function startAnimation() {
         slider.setValue(0);
-        setTimeout(advanceYear, 150);
+        setTimeout(advanceYear, animationTimeout);
     }
     function stopAnimation() {
         stopAnimating = true;

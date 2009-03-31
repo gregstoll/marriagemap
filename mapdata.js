@@ -144,7 +144,7 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
     'NJ': "M 888,386 L 888,403 L 963,403 L 963,386 z",
     'DE': "M 901,412 L 901,426 L 961,426 L 961,412 z",
     'MD': "M 903,435 L 903,449 L 964,449 L 964,435 z",
-    'DC': "M 888,457 L 888,473 L 969,473 L 959,457 z",
+    'DC': "M 888,457 L 888,473 L 959,473 L 959,457 z",
     'WV': "M 880,482 L 880,498 L 963,498 L 963,482 z"
 }
     var statenameimages = {};
@@ -161,6 +161,20 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
             drawSvgPath(statenameboxSvgPaths[state], translation, color, 1, DRAW_SVG_ONLYFILL);
         }
     }
+    function fixStateNamePositionForIE(stateName, point) {
+        // TODO - I'm not sure why IE puts the labels in the
+        // wrong place.  Could be something I'm doing wrong.
+        // I determined these values by experimenting.  Yes,
+        // this is terrible.
+        point[0] = point[0] * .912;
+        // TODO - why is Hawaii different? sigh
+        if (stateName == 'HI') {
+            point[1] = point[1] * .929;
+        } else {
+            //point[1] = point[1] * .935;
+            point[1] = point[1] * .912 + 12;
+        }
+    }
     function drawStateName(stateName) {
         var translation = scalePoint([0, -131.9412]);
         if (!(stateName in statenameimages)) {
@@ -171,6 +185,9 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
                 //alert('drawing at ' + point);
                 ctx.save();
                 ctx.translate(translation[0], translation[1]);
+                if (isIE) {
+                    fixStateNamePositionForIE(stateName, point);
+                }
                 ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
                 ctx.restore();
             }
@@ -181,6 +198,9 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
             //alert('drawing at ' + point);
             ctx.save();
             ctx.translate(translation[0], translation[1]);
+            if (isIE) {
+                fixStateNamePositionForIE(stateName, point);
+            }
             ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
             ctx.restore();
         }

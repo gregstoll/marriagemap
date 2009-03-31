@@ -174,7 +174,7 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
                 ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
                 ctx.restore();
             }
-            im.src = 'svg/statenameimages/' + stateName + '.png';
+            im.src = 'images/statenameimages/' + stateName + '.png';
         } else {
             var im = statenameimages[stateName];
             var point = scalePoint(statenamepositions[stateName]);

@@ -58,7 +58,7 @@
         <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif">
     </div>
     </td><td style="vertical-align: top;">
-        <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span></p>
+    <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span> <button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
     </td></tr></table>
     <div id="stateData"></div>
     <map id="mapMap" name="mapMap">
@@ -294,10 +294,32 @@
     function goToDate(year, month) {
         slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/(12/monthGroupsPerYear))), true);
     }
+    function advanceYear() {
+        if (stopAnimating) {
+            // Stop, and reset the flag.
+            stopAnimating = false;
+        } else {
+            slider.setValue(slider.getValue() + pixelsPerMonthGroup);
+            if (slider.getValue() + pixelsPerMonthGroup < maxSliderValue) {
+                setTimeout(advanceYear, 150);
+            }
+        }
+    }
+    var stopAnimating = false;
+    function startAnimation() {
+        slider.setValue(0);
+        setTimeout(advanceYear, 150);
+    }
+    function stopAnimation() {
+        stopAnimating = true;
+    }
     var slider;
     var startYear = 1990;
     var monthGroupsPerYear = 4;
     var pixelsPerMonthGroup = 8;
+    // If you change this, you'll need to change values in the CSS section
+    // at the top.
+    var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 6;
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
@@ -328,12 +350,9 @@
         // The slider can move 0 pixels up
         var topConstraint = 0;
 
-        // If you change this, you'll need to change values in the CSS section
-        // at the top.
-        var bottomConstraint = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 6;
 
         slider = YAHOO.widget.Slider.getHorizSlider(bg, 
-                         thumb, topConstraint, bottomConstraint, pixelsPerMonthGroup);
+                         thumb, 0, maxSliderValue, pixelsPerMonthGroup);
         // The amount the slider moves when the value is changed with the arrow
         // keys
         slider.keyIncrement = pixelsPerMonthGroup;
@@ -370,7 +389,7 @@
             redrawMap(actualValue);
 
         });
-        slider.setValue(bottomConstraint, true);
+        slider.setValue(maxSliderValue, true);
 
     });
    </script>

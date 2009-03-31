@@ -43,6 +43,9 @@
          margin: 0px;
          padding: 0px;
      }
+     h1 {
+         font-size: x-large;
+     }
    </style>
 </head>
 <body>
@@ -123,6 +126,22 @@
 <area href="#VT" shape="rect" coords="618,53,663,73" alt="Vermont" title="Vermont" />
 <area href="#RI" shape="rect" coords="734,165,811,187" alt="Rhode Island" title="Rhode Island" />
         </map>
+        <h1 id="faq">FAQ:</h1>
+        <ul>
+            <li><b>What is this?</b> This is an interactive map showing the
+legality of same-sex marriage and civil unions in the United States.</li>
+<li><b>How can I find more information about a state?</b> Click on the state to get a timeline of important events regarding same-sex marriage law.</li>
+<li><b>What's the deal with California?</b> California (and some other states, including Oregon) has civil unions, but marriage is against the constitution.  I went with the light green color instead of the dark red to emphasize that
+same-sex couples do have some rights, which seems more important than the fact
+that marriage is off limits for now.</li>
+<li><b>How did you determine the difference between "Civil unions" and "Civil unions with some rights included in marriage"?</b> I mostly relied on the determination made by the <a href="http://www.hrc.org">Human Rights Campaign</a> - <a href="http://www.hrc.org/documents/Relationship_recognition_map.pdf">here's a PDF map</a> of the states that currently recognize same-sex marriage and civil unions.</li>
+<li><b>How does the map work?</b> I'm using the <a href="http://en.wikipedia.org/wiki/Canvas_%28HTML_element%29">HTML Canvas</a> to dynamically color the map.  The map itself was adapted from <a href="http://en.wikipedia.org/wiki/File:Map_of_USA_with_state_names.svg">this Wikipedia map</a>, and the clickable regions were taken from that same page, saving me a lot of time and trouble.<br>
+Note that Internet Explorer does not natively support the HTML Canvas - I'm
+using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> to try to support it.</li>
+<li><b>How did you find this data?</b> I did a lot of online research - mostly starting with <a href="http://en.wikipedia.org/wiki/Same-sex_marriage_legislation_in_the_United_States_by_state">the Wikipedia page</a>, the <a href="http://marriagelaw.cua.edu/Law/stateinf.cfm">Marriage Law Project at The Catholic University of America</a>, and <a href="http://www.domawatch.org/stateissues/index.html">domawatch.org</a>.</li>
+<li><b>Are the source files available?</b> Yes - aside from the Javascript on this page, the other files are <a href="marriagedata.js.txt">marriagedata.js</a>, which contains all of the same-sex marriage data, and <a href="mapdata.js.txt">mapdata.js</a> which contains most of the drawing logic.</li>
+        </ul>
+        <p>Map colors based on <a href="http://www.ColorBrewer.org">www.ColorBrewer.org</a>, by Cynthia A. Brewer, Penn State.</p>
   <script type="application/x-javascript">
     var mapTypes = ['Mar', 'CU', 'CULite', 'None', 'NoMar', 'NoCU', 'NoMarConst', 'NoCUConst'];
     var mapColors = {

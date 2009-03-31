@@ -144,9 +144,12 @@ that marriage is off limits for now.</li>
 <li><b>How did you determine the difference between "Civil unions" and "Civil unions with some rights included in marriage"?</b> I mostly relied on the determination made by the <a href="http://www.hrc.org">Human Rights Campaign</a> - <a href="http://www.hrc.org/documents/Relationship_recognition_map.pdf">here's a PDF map</a> of the states that currently recognize same-sex marriage and civil unions.</li>
 <li><b>How does the map work?</b> I'm using the <a href="http://en.wikipedia.org/wiki/Canvas_%28HTML_element%29">HTML Canvas</a> to dynamically color the map.  The map itself was adapted from <a href="http://en.wikipedia.org/wiki/File:Map_of_USA_with_state_names.svg">this Wikipedia map</a>, and the clickable regions were taken from that same page, saving me a lot of time and trouble.<br>
 Note that Internet Explorer does not natively support the HTML Canvas - I'm
-using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> to try to support it.</li>
+using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> to support it.</li>
+<li><b>Why is it so slow in Internet Explorer?</b> See above - the ExplorerCanvas
+is great (I originally didn't think it would be possible to support Internet Explorer) but since it has to translate the Canvas stuff into VML stuff, it's slow.  Sorry!  Try it in Firefox or Safari or Chrome instead to get the full experience.</li>
 <li><b>How did you find this data?</b> I did a lot of online research - mostly starting with <a href="http://en.wikipedia.org/wiki/Same-sex_marriage_legislation_in_the_United_States_by_state">the Wikipedia page</a>, the <a href="http://marriagelaw.cua.edu/Law/stateinf.cfm">Marriage Law Project at The Catholic University of America</a>, and <a href="http://www.domawatch.org/stateissues/index.html">domawatch.org</a>.</li>
-<li><b>Are the source files available?</b> Yes - aside from the Javascript on this page, the other files are <a href="marriagedata.js.txt">marriagedata.js</a>, which contains all of the same-sex marriage data, and <a href="mapdata.js.txt">mapdata.js</a> which contains most of the drawing logic.</li>
+<li><b>Are the source files available?</b> Yes - aside from the Javascript on this page, the other files are <a href="marriagedata.js.txt">marriagedata.js</a>, which contains all of the same-sex marriage data, and <a href="mapdata.js.txt">mapdata.js</a> which contains most of the drawing logic.  I apologize upfront for
+the ugly hacks therein :-)</li>
         </ul>
         <p>Map colors based on <a href="http://www.ColorBrewer.org">www.ColorBrewer.org</a>, by Cynthia A. Brewer, Penn State.</p>
   <script type="text/javascript">
@@ -294,39 +297,39 @@ using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> 
             legendImage.onload = function() {
                 ctx.save();
                 ctx.translate(translation[0], translation[1]);
-                var legendX = 810*(800.0/958.69);
-                var legendY = 600*(800.0/958.69);
+                var legendX = scaleValue(810);
+                var legendY = scaleValue(600);
                 if (isIE) {
                     // TODO - why?
                     legendX *= .912;
                     legendY *= .93;
                 }
-                ctx.drawImage(legendImage, legendX, legendY, legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
+                ctx.drawImage(legendImage, legendX, legendY, scaleValue(legendImage.width), scaleValue(legendImage.height));
                 ctx.restore();
             };
             legendImage.src = 'images/legend.png';
         } else {
             ctx.save();
             ctx.translate(translation[0], translation[1]);
-            var legendX = 810*(800.0/958.69);
-            var legendY = 600*(800.0/958.69);
+            var legendX = scaleValue(810);
+            var legendY = scaleValue(600);
             if (isIE) {
                 // TODO - why?
                 legendX *= .912;
                 legendY *= .93;
             }
-            ctx.drawImage(legendImage, legendX, legendY, legendImage.width*(800.0/958.69), legendImage.height*(800.0/958.69));
+            ctx.drawImage(legendImage, legendX, legendY, scaleValue(legendImage.width), scaleValue(legendImage.height));
             ctx.restore();
         }
         // Draw the color boxes for the legend.
         ctx.save();
         ctx.translate(translation[0], translation[1]);
-        var curY = 600*(800.0/958.69);
+        var curY = scaleValue(600);
         for (var i = 0; i < mapTypes.length; ++i) {
             var mapType = mapTypes[i];
             ctx.fillStyle = mapColors[mapType];
-            ctx.fillRect(790*(800.0/958.69), curY, 15, 13);
-            curY += 13*(800.0/958.69);
+            ctx.fillRect(scaleValue(790), curY, 15, 13);
+            curY += scaleValue(13);
         }
         ctx.restore();
         

@@ -188,7 +188,7 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
                 if (isIE) {
                     fixStateNamePositionForIE(stateName, point);
                 }
-                ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
+                ctx.drawImage(im, point[0], point[1] - (scaleValue(im.height)/2), scaleValue(im.width), scaleValue(im.height));
                 ctx.restore();
             }
             im.src = 'images/statenameimages/' + stateName + '.png';
@@ -201,12 +201,17 @@ var insetBox = "M 229.21212,631.12334 L 229.68087,688.43625 L 264.68114,733.7490
             if (isIE) {
                 fixStateNamePositionForIE(stateName, point);
             }
-            ctx.drawImage(im, point[0], point[1] - (im.height*(800.0/958.69)/2), im.width*(800.0/958.69), im.height*(800.0/958.69));
+            ctx.drawImage(im, point[0], point[1] - (scaleValue(im.height)/2), scaleValue(im.width), scaleValue(im.height));
             ctx.restore();
         }
     }
     function scalePoint(point) {
-        return point.map(function(x) { return x * (800.0/958.69);});
+        return point.map(scaleValue);
+    }
+    function scaleValue(value) {
+        // This magic number is in here because the original SVG file
+        // had a width of 958.69, and I scaled it down to width 800.
+        return value * (800.0/958.69);
     }
     function getPoint(point) {
         var tempPoint = point.split(',').map(function(x) {return parseFloat(x);});

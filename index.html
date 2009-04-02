@@ -240,7 +240,7 @@ the ugly hacks therein :-)</li>
                 title = title + ' ';
             }
             title += '- ' + mapDescriptions[currentMapStatus[postalCode]];
-            elem.title = title;
+            $([elem]).attr('title', title);
         }
     }
     function redrawMap(newYear) {
@@ -355,7 +355,9 @@ the ugly hacks therein :-)</li>
     }
     var stopAnimating = false;
     function startAnimation() {
-        slider.setValue(0);
+        if (Math.floor(slider.getValue()/pixelsPerMonthGroup) == Math.floor(maxSliderValue/pixelsPerMonthGroup)) {
+            slider.setValue(0);
+        }
         setTimeout(advanceYear, animationTimeout);
     }
     function stopAnimation() {

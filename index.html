@@ -240,7 +240,7 @@ the ugly hacks therein :-)</li>
                 title = title + ' ';
             }
             title += '- ' + mapDescriptions[currentMapStatus[postalCode]];
-            $([elem]).attr('title', title);
+            elem.title = title;
         }
     }
     function redrawMap(newYear) {

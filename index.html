@@ -132,12 +132,21 @@
 <area href="#WV" shape="rect" coords="730,289,809,306" alt="West Virginia" title="West Virginia" />
 <area href="#VT" shape="rect" coords="618,53,663,73" alt="Vermont" title="Vermont" />
 <area href="#RI" shape="rect" coords="734,165,811,187" alt="Rhode Island" title="Rhode Island" />
+<area href="javascript:flashStates('Mar');" shape="rect" coords="670,388,753,400" alt="Flash states with marriage" title="Flash states with marriage legal" />
+<area href="javascript:flashStates('CU');" shape="rect" coords="670,400,765,412" alt="Flash states with civil unions" title="Flash states with civil unions legal" />
+<area href="javascript:flashStates('CULite');" shape="rect" coords="670,412,831,424" alt="Flash states with civil unions" title="Flash states with civil unions with some rights legal" />
+<area href="javascript:flashStates('None');" shape="rect" coords="670,424,745,436" alt="Flash states with none/unclear" title="Flash states with none/unclear" />
+<area href="javascript:flashStates('NoMar');" shape="rect" coords="670,436,753,448" alt="Flash states with marriage illegal" title="Flash states with marriage illegal" />
+<area href="javascript:flashStates('NoCU');" shape="rect" coords="670,448,768,460" alt="Flash states with civil unions illegal" title="Flash states with civil unions illegal" />
+<area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,460,831,472" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
+<area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,472,831,484" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
         </map>
         <h1 id="faq">FAQ:</h1>
         <ul>
             <li><b>What is this?</b> This is an interactive map showing the
 legality of same-sex marriage and civil unions in the United States.</li>
 <li><b>How can I find more information about a state?</b> Click on the state to get a timeline of important events regarding same-sex marriage law.</li>
+<li><b>I'm having some trouble telling the colors apart.</b> Click on a category in the legend to have those states flash briefly.</li>
 <li><b>What's the deal with California?</b> California (and some other states, including Oregon) has civil unions, but marriage is against the constitution.  I went with the light green color instead of the dark red to emphasize that
 same-sex couples do have some rights, which seems more important than the fact
 that marriage is off limits for now.</li>
@@ -165,6 +174,30 @@ the ugly hacks therein :-)</li>
         'NoCU': 'rgb(253, 174, 97)',
         'NoMarConst': 'rgb(244, 109, 67)',
         'NoCUConst': 'rgb(215, 48, 39)'
+    }
+    function getFlashingColor(origColor) {
+        var rgbRe = /rgb\((\d+), (\d+), (\d+)\)/;
+        var rgbMatch = rgbRe.exec(origColor);
+        if (rgbMatch.length == 4) {
+            var r = parseInt(rgbMatch[1]);
+            var g = parseInt(rgbMatch[2]);
+            var b = parseInt(rgbMatch[3]);
+            var newR = r * 1.5;
+            var newG = g * 1.5;
+            var newB = b * 1.5;
+            newR = (newR > 255) ? 255 : Math.floor(newR);
+            newG = (newG > 255) ? 255 : Math.floor(newG);
+            newB = (newB > 255) ? 255 : Math.floor(newB);
+            if (Math.abs(r - newR) + Math.abs(g - newG) + Math.abs(b - newB) < 80) {
+                // Colors are too close - use something distinguishable.
+                newR = 128;
+                newG = 128;
+                newB = 128;
+            }
+            return "rgb(" + newR + ", " + newG + ", " + newB + ")";
+        }
+        return origColor;
+
     }
     // Make sure these descriptions have no '-' in them - used as a delimiter.
     var mapDescriptions = {
@@ -234,16 +267,41 @@ the ugly hacks therein :-)</li>
         var areas = $('#mapMap area');
         for (var i = 0; i < areas.length; ++i) {
             var elem = areas[i];
-            var postalCode = elem.href.substr(elem.href.length - 2);
-            var title = elem.title.split('-')[0];
-            if (title[title.length - 1] != ' ') {
-                title = title + ' ';
+            if (elem.hash.length == 3) {
+                var postalCode = elem.href.substr(elem.href.length - 2);
+                var title = elem.title.split('-')[0];
+                if (title[title.length - 1] != ' ') {
+                    title = title + ' ';
+                }
+                title += '- ' + mapDescriptions[currentMapStatus[postalCode]];
+                elem.title = title;
             }
-            title += '- ' + mapDescriptions[currentMapStatus[postalCode]];
-            elem.title = title;
         }
     }
-    function redrawMap(newYear) {
+    function flashStates(type) {
+        return function() {
+            var numTimesLeft = 2;
+            var useFlashingColor = true;
+            function flashMap() {
+                if (useFlashingColor) {
+                    redrawMap(slider.getRealValue(), type);
+                } else {
+                    redrawMap(slider.getRealValue());
+                }
+                if (useFlashingColor) {
+                    useFlashingColor = false;
+                } else {
+                    useFlashingColor = true;
+                    --numTimesLeft;
+                }
+                if (numTimesLeft > 0) {
+                    setTimeout(flashMap, animationTimeout);
+                }
+            }
+            flashMap();
+        }();
+    }
+    function redrawMap(newYear, flashType) {
         // A full redraw looks better, and is fast enough.
         // let's try full redraw.
         for (var stateName in stateSvgPaths) {
@@ -252,7 +310,7 @@ the ugly hacks therein :-)</li>
         }
         clearMap();
         updateMapTitles();
-        drawMap();
+        drawMap(flashType);
         return;
 
         // This is the code for incremental redraw that 
@@ -280,9 +338,14 @@ the ugly hacks therein :-)</li>
         ctx.clearRect(0, 0, document.getElementById('mapCanvas').width, document.getElementById('mapCanvas').height);
     }
     var legendImage;
-    function drawMap() {
+    function drawMap(flashType) {
+        var flashingColor = flashType ? getFlashingColor(mapColors[flashType]) : "";
         for (var stateName in stateSvgPaths) {
-            drawState(stateName, mapColors[currentMapStatus[stateName]]);
+            if (currentMapStatus[stateName] == flashType) {
+                drawState(stateName, flashingColor);
+            } else {
+                drawState(stateName, mapColors[currentMapStatus[stateName]]);
+            }
         }
         for (var stateName in statenamepositions) {
             drawStateName(stateName);
@@ -382,16 +445,18 @@ the ugly hacks therein :-)</li>
         var areas = $('#mapMap area');
         for (var i = 0; i < areas.length; ++i) {
             var elem = areas[i];
-            elem.onclick = function() {
-                var postalCode = this.href.substr(this.href.length - 2);
-                var title = this.title.split('-')[0];
-                if (title[title.length - 1] == ' ') {
-                    title = title.substr(0, title.length - 1);
+            if (elem.hash.length == 3) {
+                elem.onclick = function() {
+                    var postalCode = this.href.substr(this.href.length - 2);
+                    var title = this.title.split('-')[0];
+                    if (title[title.length - 1] == ' ') {
+                        title = title.substr(0, title.length - 1);
+                    }
+                    showStateData(postalCode, title);
+                    return false;
                 }
-                showStateData(postalCode, title);
-                return false;
             }
-       }
+        }
  
         // Initialize slider
         var bg="slider-bg", thumb="slider-thumb", 

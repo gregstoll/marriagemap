@@ -34,14 +34,14 @@
          border: medium none;
      }
      #slider-bg {
-         width: 636px;
+         width: 644px;
          height: 30px;
      }
      #slider-bg img.slider-background {
          left: 0px;
          top: 0px;
          position: absolute;
-         width: 636px;
+         width: 644px;
          height: 28px;
          z-index: -1;
      }
@@ -469,7 +469,7 @@ the ugly hacks therein :-)</li>
     var pixelsPerMonthGroup = 8;
     // If you change this, you'll need to change values in the CSS section
     // at the top.
-    var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 6;
+    var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 9;
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
@@ -539,9 +539,9 @@ the ugly hacks therein :-)</li>
             $('#slider-bg').attr('title', printedValue);
 
             redrawMap(actualValue);
-            if (isAnimating) {
+            //if (isAnimating) {
                 showAnimationData(actualValue);
-            }
+            //}
 
         });
         slider.setValue(maxSliderValue, true);

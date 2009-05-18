@@ -174,7 +174,7 @@ the ugly hacks therein :-)</li>
         'NoCU': 'rgb(253, 174, 97)',
         'NoMarConst': 'rgb(244, 109, 67)',
         'NoCUConst': 'rgb(215, 48, 39)'
-    }
+    };
     function getFlashingColor(origColor) {
         var rgbRe = /rgb\((\d+), (\d+), (\d+)\)/;
         var rgbMatch = rgbRe.exec(origColor);
@@ -231,12 +231,21 @@ the ugly hacks therein :-)</li>
       };
     }
     var ctx;
+    function compareYear(year1, year2) {
+        if (year1[0] < year2[0] || (year1[0] == year2[0] && year1[1] < year2[1])) {
+            return -1;
+        } else if (year1[0] == year2[0] && year1[1] == year2[1]) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
     function getStateStatus(stateName, year) {
         var status = 'None';
         var stateMarriageData = marriagedata[stateName];
         for (var i = 0; i < stateMarriageData.length; ++i) {
             var testYear = stateMarriageData[i][0].split('-').map(function(x) { return parseInt(x, 10);});
-            if (testYear[0] < year[0] || (testYear[0] == year[0] && testYear[1] <= year[1])) {
+            if (compareYear(testYear, year) <= 0) {
                 status = stateMarriageData[i][1];
             } else {
                 // Assumes the marriage data is in sorted order.
@@ -404,20 +413,25 @@ the ugly hacks therein :-)</li>
         slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/(12/monthGroupsPerYear))), true);
     }
     // IE canvas is slower, so make animation faster.
-    var animationTimeout = isIE ? 50: 150;
+    var animationTimeout = isIE ? 500: 1000;
     function advanceYear() {
         if (stopAnimating) {
             // Stop, and reset the flag.
             stopAnimating = false;
+            isAnimating = false;
         } else {
             slider.setValue(slider.getValue() + pixelsPerMonthGroup);
             if (slider.getValue() + pixelsPerMonthGroup < maxSliderValue) {
                 setTimeout(advanceYear, animationTimeout);
+            } else {
+                isAnimating = false;
             }
         }
     }
     var stopAnimating = false;
+    var isAnimating = false;
     function startAnimation() {
+        isAnimating = true;
         if (Math.floor(slider.getValue()/pixelsPerMonthGroup) == Math.floor(maxSliderValue/pixelsPerMonthGroup)) {
             slider.setValue(0);
         }
@@ -425,6 +439,29 @@ the ugly hacks therein :-)</li>
     }
     function stopAnimation() {
         stopAnimating = true;
+    }
+    function showAnimationData(endYear) {
+        var startYear = [endYear[0], endYear[1] - 2];
+        var htmlData = [];
+        // Find all changes between startYear and endYear.
+        for (var postalCode in marriagedata) {
+            // See if we have any changes in here.
+            var data = marriagedata[postalCode];
+            for (var i = 0; i < data.length; ++i) {
+                var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
+                if (compareYear(startYear, dateParts) <= 0 && compareYear(dateParts, endYear) <= 0) {
+                    htmlData.push('<li><b>' + postalCode + '</b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
+                } else if (compareYear(dateParts, endYear) > 0) {
+                    // Since we're in sorted order, no more from this state.
+                    break;
+                }
+            }
+        }
+        if (htmlData.length > 0) {
+            $('#stateData').html('<ul>' + htmlData.join('\n') + '</ul>');
+        } else {
+            $('#stateData').html('');
+        }
     }
     var slider;
     var startYear = 1990;
@@ -502,6 +539,9 @@ the ugly hacks therein :-)</li>
             $('#slider-bg').attr('title', printedValue);
 
             redrawMap(actualValue);
+            if (isAnimating) {
+                showAnimationData(actualValue);
+            }
 
         });
         slider.setValue(maxSliderValue, true);

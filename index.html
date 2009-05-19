@@ -441,19 +441,15 @@ the ugly hacks therein :-)</li>
         stopAnimating = true;
     }
     function showAnimationData(endYear) {
-        var startYear = [endYear[0], endYear[1] - 2];
         var htmlData = [];
-        // Find all changes between startYear and endYear.
+        // Find all changes ending in the endYear bucket.
         for (var postalCode in marriagedata) {
-            // See if we have any changes in here.
-            var data = marriagedata[postalCode];
-            for (var i = 0; i < data.length; ++i) {
-                var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
-                if (compareYear(startYear, dateParts) <= 0 && compareYear(dateParts, endYear) <= 0) {
+            if (endYear in stateDateDataHash[postalCode]) {
+                var data = marriagedata[postalCode];
+                for (var j in stateDateDataHash[postalCode][endYear]) {
+                    var i = stateDateDataHash[postalCode][endYear][j];
+                    var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
                     htmlData.push('<li><b>' + postalCode + '</b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
-                } else if (compareYear(dateParts, endYear) > 0) {
-                    // Since we're in sorted order, no more from this state.
-                    break;
                 }
             }
         }
@@ -465,11 +461,15 @@ the ugly hacks therein :-)</li>
     }
     var slider;
     var startYear = 1990;
+    // This must be a multiple of 12.
     var monthGroupsPerYear = 4;
     var pixelsPerMonthGroup = 8;
     // If you change this, you'll need to change values in the CSS section
     // at the top.
+    // TODO - fix this
     var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 9;
+    var stateDateDataHash = {};
+    var monthGroupInterval = 12/monthGroupsPerYear;
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
@@ -494,6 +494,25 @@ the ugly hacks therein :-)</li>
                 }
             }
         }
+
+        // Initialize stateDateDataHash
+        for (var postalCode in marriagedata) {
+            stateDateDataHash[postalCode] = {};
+            var data = marriagedata[postalCode];
+            for (var i = 0; i < data.length; ++i) {
+                // See which bucket this should go in.
+                var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
+                // Round up to the next bucket, since we index by end year.
+                if (dateParts[1] % monthGroupInterval != 0) {
+                    dateParts[1] += monthGroupInterval - (dateParts[1] % monthGroupInterval)
+                }
+                if (!(dateParts in stateDateDataHash[postalCode])) {
+                    stateDateDataHash[postalCode][dateParts] = [];
+                }
+                stateDateDataHash[postalCode][dateParts].push(i);
+            }
+        }
+
  
         // Initialize slider
         var bg="slider-bg", thumb="slider-thumb", 

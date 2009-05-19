@@ -410,7 +410,7 @@ the ugly hacks therein :-)</li>
 
     }
     function goToDate(year, month) {
-        slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/(12/monthGroupsPerYear))), true);
+        slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/monthGroupInterval)), true);
     }
     // IE canvas is slower, so make animation faster.
     var animationTimeout = isIE ? 500: 1000;
@@ -531,7 +531,7 @@ the ugly hacks therein :-)</li>
 
         slider.getRealValue = function() {
             var realValue = Math.round(this.getValue() / pixelsPerMonthGroup);
-            return [startYear + Math.floor(realValue/monthGroupsPerYear), (realValue % monthGroupsPerYear) * (12/monthGroupsPerYear) + (12/monthGroupsPerYear)];
+            return [startYear + Math.floor(realValue/monthGroupsPerYear), (realValue % monthGroupsPerYear) * monthGroupInterval + monthGroupInterval];
         }
         slider.subscribe("change", function(offsetFromStart) {
             // use the scale factor to convert the pixel offset into a real

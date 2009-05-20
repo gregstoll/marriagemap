@@ -224,6 +224,10 @@ the ugly hacks therein :-)</li>
         'NoMarConst': 'Marriage forbidden by state constitution',
         'NoCUConst': 'Marriage or civil unions forbidden by state constitution'
     }
+    // It would be nice if we didn't have to repeat this data multiple times
+    // (see the area elements), but such is life.  Also, I doubt these will
+    // change anytime soon.
+    var stateNames = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'};
     var currentMapStatus = {};
     if (!Array.prototype.map)
     {
@@ -463,7 +467,7 @@ the ugly hacks therein :-)</li>
                 for (var j in stateDateDataHash[postalCode][endYear]) {
                     var i = stateDateDataHash[postalCode][endYear][j];
                     var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
-                    htmlData.push('<li><b>' + postalCode + '</b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
+                    htmlData.push('<li><b>' + stateNames[postalCode] + '</b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
                 }
             }
         }

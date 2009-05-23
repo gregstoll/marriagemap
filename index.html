@@ -34,14 +34,16 @@
          border: medium none;
      }
      #slider-bg {
-         width: 644px;
+         /* TODO - this should be maxSliderValue + 26 */
+         width: 656px;
          height: 30px;
      }
      #slider-bg img.slider-background {
          left: 0px;
          top: 0px;
          position: absolute;
-         width: 644px;
+         /* TODO - this should be maxSliderValue + 26 */
+         width: 656px;
          height: 28px;
          z-index: -1;
      }
@@ -79,7 +81,7 @@
     <tr><td style="vertical-align: top; height: 30px;">
     <div id="slider-bg" class="yui-h-slider" tabindex="-1">
         <div id="slider-thumb" class="yui-slider-thumb"><img src="http://yui.yahooapis.com/2.7.0/build/slider/assets/thumb-n.gif"></div>
-        <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif">
+        <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif" id="slider-background">
     </div>
     </td><td style="vertical-align: top;">
     <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span> <button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
@@ -196,14 +198,19 @@ the ugly hacks therein :-)</li>
             var r = parseInt(rgbMatch[1]);
             var g = parseInt(rgbMatch[2]);
             var b = parseInt(rgbMatch[3]);
-            var newR = r * 1.5;
-            var newG = g * 1.5;
-            var newB = b * 1.5;
-            newR = (newR > 255) ? 255 : Math.floor(newR);
-            newG = (newG > 255) ? 255 : Math.floor(newG);
-            newB = (newB > 255) ? 255 : Math.floor(newB);
+            var hsl = rgbToHsl(r, g, b);
+            if (hsl[2] < .5) {
+                hsl[2] = hsl[2] * 1.25 + .25;
+            } else {
+                hsl[2] = (hsl[2] - .25) / 1.25;
+            }
+            var newRgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
+            var newR = newRgb[0];
+            var newG = newRgb[1];
+            var newB = newRgb[2];
             if (Math.abs(r - newR) + Math.abs(g - newG) + Math.abs(b - newB) < 80) {
                 // Colors are too close - use something distinguishable.
+                // Hopefully this won't happen anymore.
                 newR = 128;
                 newG = 128;
                 newB = 128;
@@ -213,7 +220,6 @@ the ugly hacks therein :-)</li>
         return origColor;
 
     }
-    // Make sure these descriptions have no '-' in them - used as a delimiter.
     var mapDescriptions = {
         'Mar': 'Marriage is legal',
         'CU': 'Civil unions are legal',
@@ -273,6 +279,7 @@ the ugly hacks therein :-)</li>
         return status;
     }
     var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var shortMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     function showStateData(postalCode, stateName) {
         var htmlData = [];
         htmlData.push('<h1>' + stateName + ':</h1>');
@@ -288,7 +295,7 @@ the ugly hacks therein :-)</li>
             htmlData.push('</ul>');
         }
         $('#stateData').html(htmlData.join('\n'));
-        location.hash = 'stateData';
+        updateHash(slider.getRealValue(), postalCode);
     }
     function updateMapTitles() {
         var areas = $('#mapMap area');
@@ -305,6 +312,84 @@ the ugly hacks therein :-)</li>
             }
         }
     }
+    function updateHash(year, postalCode) {
+        if (postalCode == undefined) {
+            location.hash = "year=" + year[0] + "-" + year[1];
+        } else {
+            location.hash = "year=" + year[0] + "-" + year[1] + "&state=" + postalCode;
+        }
+    }
+
+    /**
+     * Converts an RGB color value to HSL. Conversion formula
+     * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+     * Assumes r, g, and b are contained in the set [0, 255] and
+     * returns h, s, and l in the set [0, 1].
+     *
+     * @param   {Number}    r       The red color value
+     * @param   {Number}    g       The green color value
+     * @param   {Number}    b       The blue color value
+     * @return  {Array}             The HSL representation
+     */
+    var rgbToHsl = function(r, g, b){
+        r /= 255, g /= 255, b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if(max == min){
+            h = s = 0; // achromatic
+        }else{
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch(max){
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        return [h, s, l];
+    };
+
+    /**
+     * Converts an HSL color value to RGB. Conversion formula
+     * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+     * Assumes h, s, and l are contained in the set [0, 1] and
+     * returns r, g, and b in the set [0, 255].
+     *
+     * @param   {Number}    h       The hue
+     * @param   {Number}    s       The saturation
+     * @param   {Number}    l       The lightness
+     * @return  {Array}             The RGB representation
+     */
+    var hslToRgb = function(h, s, l){
+        var r, g, b;
+
+        if(s == 0){
+            r = g = b = l; // achromatic
+        }else{
+            function hue2rgb(p, q, t){
+                if(t < 0) t += 1;
+                if(t > 1) t -= 1;
+                if(t < 1/6) return p + (q - p) * 6 * t;
+                if(t < 1/2) return q;
+                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    };
+
+
+
     function flashStates(type) {
         return function() {
             var numTimesLeft = 2;
@@ -467,7 +552,7 @@ the ugly hacks therein :-)</li>
                 for (var j in stateDateDataHash[postalCode][endYear]) {
                     var i = stateDateDataHash[postalCode][endYear][j];
                     var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
-                    htmlData.push('<li><b>' + stateNames[postalCode] + '</b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
+                    htmlData.push('<li><b><a href="javascript:showStateData(\'' + postalCode + '\', \'' + stateNames[postalCode] + '\')">' + stateNames[postalCode] + '</a></b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
                 }
             }
         }
@@ -501,13 +586,29 @@ the ugly hacks therein :-)</li>
     var startYear = 1990;
     // This must be a multiple of 12.
     var monthGroupsPerYear = 4;
+    var monthGroupInterval = 12/monthGroupsPerYear;
     var pixelsPerMonthGroup = 8;
     // If you change this, you'll need to change values in the CSS section
     // at the top.
-    // TODO - fix this
-    var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(2009 -startYear) + 1) + 9;
+    var curYear = [(new Date()).getFullYear(), Math.floor((new Date()).getMonth()/monthGroupInterval)*monthGroupInterval + monthGroupInterval];
+    var endYear = curYear;
+    // Take the latest time that something happened.
+    for (var postalCode in marriagedata) {
+        if (marriagedata[postalCode].length > 0) {
+            var latestDateParts = marriagedata[postalCode][marriagedata[postalCode].length - 1][0].split('-').map(function(x) { return parseInt(x, 10);});
+            // Round up to the next bucket, since we index by end year.
+            if (latestDateParts[1] % monthGroupInterval != 0) {
+                latestDateParts[1] += monthGroupInterval - (latestDateParts[1] % monthGroupInterval)
+            }
+            if (compareYear(endYear, latestDateParts) == -1) {
+                endYear = latestDateParts;
+            }
+        }
+    }
+    var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(endYear[0] -startYear) + (endYear[1]/monthGroupInterval) - 1) + 6;
+    /*$('#slider-bg').attr('width', maxSliderValue + 26);
+    $('#slider-background').attr('width', maxSliderValue + 26);*/
     var stateDateDataHash = {};
-    var monthGroupInterval = 12/monthGroupsPerYear;
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
@@ -527,11 +628,7 @@ the ugly hacks therein :-)</li>
             if (elem.hash.length == 3) {
                 elem.onclick = function() {
                     var postalCode = this.href.substr(this.href.length - 2);
-                    var title = this.title.split('-')[0];
-                    if (title[title.length - 1] == ' ') {
-                        title = title.substr(0, title.length - 1);
-                    }
-                    showStateData(postalCode, title);
+                    showStateData(postalCode, stateNames[postalCode]);
                     return false;
                 }
             }
@@ -579,18 +676,8 @@ the ugly hacks therein :-)</li>
             // use the scale factor to convert the pixel offset into a real
             // value
             var actualValue = slider.getRealValue();
-            var monthNames = 'Jan-Mar';
-            switch (actualValue[1]) {
-                case 6:
-                    monthNames = 'Apr-Jun';
-                    break;
-                case 9:
-                    monthNames = 'Jul-Sep';
-                    break;
-                case 12:
-                    monthNames = 'Oct-Dec';
-                    break;
-            }
+            var mult = (actualValue[1] / monthGroupInterval) - 1;
+            var monthNames = shortMonthNames[mult * monthGroupInterval] + '-' + shortMonthNames[(mult + 1) * monthGroupInterval - 1];
             var printedValue = monthNames + ' ' + actualValue[0];
             $('#slider-value').html(printedValue);
 
@@ -600,14 +687,41 @@ the ugly hacks therein :-)</li>
             $('#slider-bg').attr('title', printedValue);
 
             redrawMap(actualValue);
+            updateHash(actualValue);
             //if (isAnimating) {
                 showAnimationData(actualValue);
             //}
 
         });
-        slider.setValue(maxSliderValue, true);
+        if (location.hash.length > 1) {
+            var hashVals = location.hash.substr(1).split('&').map(function(x) { return x.split('=')});
+            var dateToSet = curYear;
+            var stateToSet = undefined;
+            for (var i in hashVals) {
+                if (hashVals[i][0] == 'year') {
+                    dateToSet = hashVals[i][1].split('-').map(function(x) { return parseInt(x, 10);});
+                } else if (hashVals[i][0] == 'state') {
+                    stateToSet = hashVals[i][1];
+                }
+            }
+            goToDate(dateToSet[0], dateToSet[1]);
+            // Wait for the location.hash to change.
+            var expectedHash = "#year=" + dateToSet[0] + "-" + dateToSet[1];
+            if (stateToSet != undefined) {
+                waitForHashThenChangeState(expectedHash, stateToSet);
+            }
+        } else {
+            goToDate(curYear[0], curYear[1]);
+        }
 
     });
+    function waitForHashThenChangeState(expectedHash, stateToSet) {
+        if (location.hash == expectedHash) {
+            showStateData(stateToSet, stateNames[stateToSet]);
+            return;
+        }
+        setTimeout(function() {waitForHashThenChangeState(expectedHash, stateToSet);}, 750);
+    }
    </script>
  
    <p><a href="/">Greg's home page</a></p>

@@ -513,7 +513,19 @@ the ugly hacks therein :-)</li>
 
     }
     function goToDate(year, month) {
-        slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/monthGroupInterval)), true);
+        var realValue = slider.getRealValue();
+        // Round up to the next bucket, since we index by end year.
+        if (month % monthGroupInterval != 0) {
+            month += monthGroupInterval - (month % monthGroupInterval);
+        }
+        if (realValue[0] != year || realValue[1] != month) {
+            slider.setValue(pixelsPerMonthGroup*((year - startYear)*monthGroupsPerYear + Math.floor((month-1)/monthGroupInterval)), true);
+        } else {
+            // Here the date has not changed, but we still want to update
+            // the hash and animation data.
+            updateHash(realValue);
+            showAnimationData(realValue);
+        }
     }
     // IE canvas is slower, so make animation faster.
     animationTimeout = isIE ? 500: 1000;

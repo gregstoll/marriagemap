@@ -148,14 +148,14 @@
 <area href="#WV" shape="rect" coords="730,289,809,306" alt="West Virginia" title="West Virginia" />
 <area href="#VT" shape="rect" coords="618,53,663,73" alt="Vermont" title="Vermont" />
 <area href="#RI" shape="rect" coords="734,165,811,187" alt="Rhode Island" title="Rhode Island" />
-<area href="javascript:flashStates('Mar');" shape="rect" coords="670,388,753,400" alt="Flash states with marriage" title="Flash states with marriage legal" />
-<area href="javascript:flashStates('CU');" shape="rect" coords="670,400,765,412" alt="Flash states with civil unions" title="Flash states with civil unions legal" />
-<area href="javascript:flashStates('CULite');" shape="rect" coords="670,412,831,424" alt="Flash states with civil unions" title="Flash states with civil unions with some rights legal" />
+<area href="javascript:flashStates('Mar');" shape="rect" coords="670,390,753,401" alt="Flash states with marriage" title="Flash states with marriage legal" />
+<area href="javascript:flashStates('CU');" shape="rect" coords="670,401,765,412" alt="Flash states with civil unions" title="Flash states with civil unions legal" />
+<area href="javascript:flashStates('CULite');" shape="rect" coords="670,412,831,424" alt="Flash states with civil unions with some rights legal" title="Flash states with civil unions with some rights legal" />
 <area href="javascript:flashStates('None');" shape="rect" coords="670,424,745,436" alt="Flash states with none/unclear" title="Flash states with none/unclear" />
-<area href="javascript:flashStates('NoMar');" shape="rect" coords="670,436,753,448" alt="Flash states with marriage illegal" title="Flash states with marriage illegal" />
-<area href="javascript:flashStates('NoCU');" shape="rect" coords="670,448,768,460" alt="Flash states with civil unions illegal" title="Flash states with civil unions illegal" />
-<area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,460,831,472" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
-<area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,472,831,484" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
+<area href="javascript:flashStates('NoMar');" shape="rect" coords="670,436,753,447" alt="Flash states with marriage illegal" title="Flash states with marriage illegal" />
+<area href="javascript:flashStates('NoCU');" shape="rect" coords="670,447,768,458" alt="Flash states with civil unions illegal" title="Flash states with civil unions illegal" />
+<area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,458,831,470" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
+<area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,470,831,481" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
         </map>
         <h1 id="faq">FAQ:</h1>
         <ul>
@@ -317,7 +317,7 @@ the ugly hacks therein :-)</li>
             location.hash = "year=" + year[0] + "-" + year[1];
         } else {
             location.hash = "year=" + year[0] + "-" + year[1] + "&state=" + postalCode;
-        }
+       }
     }
 
     /**
@@ -547,11 +547,13 @@ the ugly hacks therein :-)</li>
         var htmlData = [];
         // Find all changes ending in the endYear bucket.
         for (var postalCode in marriagedata) {
+            if (!marriagedata.hasOwnProperty(postalCode)) continue;
             if (endYear in stateDateDataHash[postalCode]) {
                 var data = marriagedata[postalCode];
                 for (var j in stateDateDataHash[postalCode][endYear]) {
+                    if (!stateDateDataHash[postalCode][endYear].hasOwnProperty(j)) continue;
                     var i = stateDateDataHash[postalCode][endYear][j];
-                    var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10);});
+                    var dateParts = data[i][0].split('-').map(function(x) { return parseInt(x, 10)});
                     htmlData.push('<li><b><a href="javascript:showStateData(\'' + postalCode + '\', \'' + stateNames[postalCode] + '\')">' + stateNames[postalCode] + '</a></b>: ' + monthNames[dateParts[1]-1] + ' ' + dateParts[0] + ': <span style="background-color: ' + mapColors[data[i][1]] + '">' + mapDescriptions[data[i][1]] + '</span> - ' + data[i][2] + '</li>');
                 }
             }
@@ -688,9 +690,7 @@ the ugly hacks therein :-)</li>
 
             redrawMap(actualValue);
             updateHash(actualValue);
-            //if (isAnimating) {
-                showAnimationData(actualValue);
-            //}
+            showAnimationData(actualValue);
 
         });
         if (location.hash.length > 1) {

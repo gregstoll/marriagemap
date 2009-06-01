@@ -34,16 +34,16 @@
          border: medium none;
      }
      #slider-bg {
-         /* TODO - this should be maxSliderValue + 26 */
-         width: 656px;
+         /* TODO - this should be maxSliderValue + 24 */
+         width: 654px;
          height: 30px;
      }
      #slider-bg img.slider-background {
          left: 0px;
          top: 0px;
          position: absolute;
-         /* TODO - this should be maxSliderValue + 26 */
-         width: 656px;
+         /* TODO - this should be maxSliderValue + 24 */
+         width: 654px;
          height: 28px;
          z-index: -1;
      }
@@ -620,12 +620,13 @@ the ugly hacks therein :-)</li>
         }
     }
     var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(endYear[0] -startYear) + (endYear[1]/monthGroupInterval) - 1) + 6;
-    /*$('#slider-bg').attr('width', maxSliderValue + 26);
-    $('#slider-background').attr('width', maxSliderValue + 26);*/
     var stateDateDataHash = {};
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
+        // TODO
+        /*$('#slider-bg').attr('width', maxSliderValue + 26);
+        $('#slider-background').attr('width', maxSliderValue + 26);*/
 
         // Update animation speed.
         updateAnimationSpeed();

@@ -1,0 +1,13 @@
+to parameterize:
+  - state data
+  - title
+  - text above
+  - text below
+  - names of "state"
+  - area of flashing for "state"
+  - colors for "state"s
+  - descriptions for "state"s
+  - start year(/month)
+  - month groups per year (1, 2, 3, 4, 6, 12)
+  - pixels per month group?
+  - animation speeds?

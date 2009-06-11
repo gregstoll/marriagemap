@@ -34,16 +34,16 @@
          border: medium none;
      }
      #slider-bg {
-         /* TODO - this should be maxSliderValue + 24 */
-         width: 654px;
+         /* we'll reset this width later */
+         width: 30px;
          height: 30px;
      }
      #slider-bg img.slider-background {
          left: 0px;
          top: 0px;
          position: absolute;
-         /* TODO - this should be maxSliderValue + 24 */
-         width: 654px;
+         /* we'll reset this width later */
+         width: 30px;
          height: 28px;
          z-index: -1;
      }
@@ -78,13 +78,13 @@
     </table></form>
 </td></tr></table>
     <table>
-    <tr><td style="vertical-align: top; height: 30px;">
+    <tr><td id="slider-td" style="vertical-align: top; height: 30px;">
     <div id="slider-bg" class="yui-h-slider" tabindex="-1">
         <div id="slider-thumb" class="yui-slider-thumb"><img src="http://yui.yahooapis.com/2.7.0/build/slider/assets/thumb-n.gif"></div>
         <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif" id="slider-background">
     </div>
     </td><td style="vertical-align: top;">
-    <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span> <button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
+    <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span>&nbsp;<button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
     </td></tr></table>
     <div id="stateData"></div>
     <map id="mapMap" name="mapMap">
@@ -624,9 +624,13 @@ the ugly hacks therein :-)</li>
     $(document).ready(function() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
+
+        // TODO - get parent of slider-bg?
+        /*$('#slider-td').css('width', maxSliderValue + 26);*/
         // TODO
-        /*$('#slider-bg').attr('width', maxSliderValue + 26);
-        $('#slider-background').attr('width', maxSliderValue + 26);*/
+        $('#slider-bg').parent().css('width', maxSliderValue + 26);
+        $('#slider-bg').css('width', maxSliderValue + 26);
+        $('#slider-background').css('width', maxSliderValue + 26);
 
         // Update animation speed.
         updateAnimationSpeed();

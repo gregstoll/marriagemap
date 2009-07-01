@@ -11,3 +11,7 @@ to parameterize:
   - month groups per year (1, 2, 3, 4, 6, 12)
   - pixels per month group?
   - animation speeds?
+  - discrete versus continuous (numeric)?
+ways to control:
+  - pure javascript (inline somehow? or stored in page that you save?)
+  - djangoish and hosted and people can edit

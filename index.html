@@ -18,7 +18,7 @@
   <!-- Combo-handled YUI JS files: -->
   <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/dragdrop/dragdrop-min.js&2.7.0/build/slider/slider-min.js"></script>
   <script src="mapdata.js" type="text/javascript"></script>
-  <script src="marriagedata.js" type="text/javascript"></script>
+  <!-- <script src="marriagedata.js" type="text/javascript"></script> -->
   <style type="text/css">
      canvas { border: 1px solid black; }
      /* Inspired by http://demos.greghoustondesign.com/piechart/ */
@@ -87,7 +87,19 @@
     <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span>&nbsp;<button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
     </td></tr></table>
     <div id="stateData"></div>
-    <map id="mapMap" name="mapMap">
+<div>
+<script type="text/javascript"><!--
+google_ad_client = "pub-6170882740725599";
+/* marriagemap, 300x250, created 12/2/09 */
+google_ad_slot = "5182049633";
+google_ad_width = 728;
+google_ad_height = 90;
+// -->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<map id="mapMap" name="mapMap">
 <area href="#AL" shape="poly" coords="546,316,567,383,528,389,528,401,516,397,514,318" alt="Alabama" title="Alabama" />
 <area href="#AK" shape="poly" coords="128,389,130,459,150,465,173,489,173,501,155,499,134,471,99,465,85,481,10,491,57,465,34,440,44,399,61,381,91,371" alt="Alaska" title="Alaska" />
 <area href="#AZ" shape="poly" coords="112,336,161,369,193,375,208,275,136,263,132,277,126,277,118,295,128,310" alt="Arizona" title="Arizona" />
@@ -157,7 +169,7 @@
 <area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,458,831,470" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
 <area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,470,831,481" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
         </map>
-        <h1 id="faq">FAQ:</h1>
+        <h1 id="faq" style="clear: both;">FAQ:</h1>
         <ul>
             <li><b>What is this?</b> This is an interactive map showing the
 legality of same-sex marriage and civil unions in the United States.</li>
@@ -621,7 +633,27 @@ the ugly hacks therein :-)</li>
     }
     var maxSliderValue = pixelsPerMonthGroup * (monthGroupsPerYear*(endYear[0] -startYear) + (endYear[1]/monthGroupInterval) - 1) + 6;
     var stateDateDataHash = {};
+    var marriagedata = {};
     $(document).ready(function() {
+        // Code:
+        // Mar - same-sex marriage allowed
+        // CU - same-sex civil unions allowed
+        // CULite - some same-sex rights
+        // None - none/unclear
+        // NoMar - no same-sex marriage by statute
+        // NoCU - no same-sex civil unions by statute
+        // NoMarConst - no same-sex marriage in constitution
+        // NoCUConst - no same-sex civil unions in constitution
+        // References:
+        // http://marriagelaw.cua.edu/law/states/AL.cfm
+        // http://www.domawatch.org/stateissues/alaska/index.html
+        // http://ballotpedia.org/wiki/index.php/Marriage-related_ballot_measures_and_initiatives
+        $.getJSON('marriagedata.js', function(data) {
+            marriagedata = data;
+            doRestOfStartUp();
+        });
+    });
+    function doRestOfStartUp() {
         var canvas = document.getElementById('mapCanvas');
         ctx = canvas.getContext('2d');
 
@@ -728,7 +760,7 @@ the ugly hacks therein :-)</li>
             goToDate(curYear[0], curYear[1]);
         }
 
-    });
+    }
     function waitForHashThenChangeState(expectedHash, stateToSet) {
         if (location.hash == expectedHash) {
             showStateData(stateToSet, stateNames[stateToSet]);

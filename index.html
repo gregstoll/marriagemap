@@ -88,16 +88,15 @@
     </td></tr></table>
     <div id="stateData"></div>
 <div>
-<script type="text/javascript"><!--
+<!-- <script type="text/javascript">
 google_ad_client = "pub-6170882740725599";
 /* marriagemap, 300x250, created 12/2/09 */
 google_ad_slot = "5182049633";
 google_ad_width = 728;
 google_ad_height = 90;
-// -->
 </script>
 <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
+</script> -->
 </div>
 <map id="mapMap" name="mapMap">
 <area href="#AL" shape="poly" coords="546,316,567,383,528,389,528,401,516,397,514,318" alt="Alabama" title="Alabama" />
@@ -175,10 +174,11 @@ google_ad_height = 90;
 legality of same-sex marriage and civil unions in the United States.</li>
 <li><b>How can I find more information about a state?</b> Click on the state to get a timeline of important events regarding same-sex marriage law.</li>
 <li><b>I'm having some trouble telling the colors apart.</b> Click on a category in the legend to have those states flash briefly.</li>
-<li><b>What's the deal with California?</b> California (and some other states, including Oregon) has civil unions, but marriage is against the constitution.  I went with the light green color instead of the dark red to emphasize that
+<li><b>What's the deal with California?</b> California (and some other states, including Oregon) has civil unions, but marriage is against the constitution.  I went with the green color instead of the dark red to emphasize that
 same-sex couples do have some rights, which seems more important than the fact
 that marriage is off limits for now.</li>
 <li><b>How did you determine the difference between "Civil unions" and "Civil unions with some rights included in marriage"?</b> I mostly relied on the determination made by the <a href="http://www.hrc.org">Human Rights Campaign</a> - <a href="http://www.hrc.org/documents/Relationship_recognition_map.pdf">here's a PDF map</a> of the states that currently recognize same-sex marriage and civil unions.</li>
+<li><b>Where can I find more information about interstate relationship recognition, hospital visitation laws, etc.?</b> The Human Rights Campaign maintains <a href="http://www.hrc.org/about_us/state_laws.asp">a number of maps</a> covering these issues.</li>
 <li><b>How does the map work?</b> I'm using the <a href="http://en.wikipedia.org/wiki/Canvas_%28HTML_element%29">HTML Canvas</a> to dynamically color the map.  The map itself was adapted from <a href="http://en.wikipedia.org/wiki/File:Map_of_USA_with_state_names.svg">this Wikipedia map</a>, and the clickable regions were taken from that same page, saving me a lot of time and trouble.<br>
 Note that Internet Explorer does not natively support the HTML Canvas - I'm
 using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> to support it.</li>
@@ -194,8 +194,10 @@ the ugly hacks therein :-)</li>
   <script type="text/javascript">
     var mapTypes = ['Mar', 'CU', 'CULite', 'None', 'NoMar', 'NoCU', 'NoMarConst', 'NoCUConst'];
     var mapColors = {
-        'Mar': 'rgb(26, 152, 80)',
-        'CU': 'rgb(102, 189, 99)',
+        //'Mar': 'rgb(26, 152, 80)',
+        'Mar': 'rgb(20, 118, 255)',
+        //'CU': 'rgb(102, 189, 99)',
+        'CU': 'rgb(26, 152, 80)',
         'CULite': 'rgb(166, 217, 106)',
         'None': 'rgb(255, 255, 191)',
         'NoMar': 'rgb(254, 224, 139)',

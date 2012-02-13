@@ -67,9 +67,10 @@
     <table><tr><td>
     <div class="canvasWrapper">
         <canvas id="mapCanvas" width="850" height="495"></canvas>
-        <img width="800" height="495" src="images/spacer.gif" usemap="#mapMap" style="width: 800px; height: 495px;" alt="">
+        <img width="800" height="495" src="images/spacer.gif" id="imageMapMap" usemap="#mapMap" style="width: 800px; height: 495px;" alt="">
     </div></td><td style="vertical-align: bottom;">
     <form class="compact" action="javascript:void(0);"><table>
+            <tr><td><input type="checkbox" id="cartogramCheckbox"><label for="cartogramCheckbox"> Show cartogram</label></td></tr>
             <tr><td><input type="radio" name="animationSpeed" value="0">Very slow</td></tr>
             <tr><td><input type="radio" name="animationSpeed" value="1">Slow</td></tr>
             <tr><td><input type="radio" name="animationSpeed" value="2">Medium</td></tr>
@@ -168,12 +169,21 @@ google_ad_height = 90;
 <area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,458,831,470" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
 <area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,470,831,481" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
         </map>
+        <p>Also available on the HP TouchPad: <a href="http://developer.palm.com/appredirect/?packageid=com.gregstoll.marriagemap"><img alt="Download it on the HP App Catalog" title="Download it on the HP App Catalog" src="appcatalog.png" border="0"></a></p>
         <h1 id="faq" style="clear: both;">FAQ:</h1>
         <ul>
             <li><b>What is this?</b> This is an interactive map showing the
-legality of same-sex marriage and civil unions in the United States.</li>
+legality of same-sex (gay) marriage and civil unions in the United States.</li>
 <li><b>How can I find more information about a state?</b> Click on the state to get a timeline of important events regarding same-sex marriage law.</li>
 <li><b>I'm having some trouble telling the colors apart.</b> Click on a category in the legend to have those states flash briefly.</li>
+<li><b>What's a cartogram?</b> A cartogram is a kind of map that shows states
+roughly in proportion to their population, and so it's more representative
+of how many people in the US are living under which laws.  In this case,
+I based the cartogram
+on <a href="http://en.wikipedia.org/wiki/File:Cartogram-2008_Electoral_Vote.svg">this Wikipedia cartogram of the 2008 election</a>.  Ideally the cartogram would
+change based on what year we're showing to keep up with population.  Also note
+that small states are slightly overrepresented since every state gets at least
+3 electoral votes.</li>
 <li><b>What's the deal with California?</b> California (and some other states, including Oregon) has civil unions, but marriage is against the constitution.  I went with the green color instead of the dark red to emphasize that
 same-sex couples do have some rights, which seems more important than the fact
 that marriage is off limits for now.</li>
@@ -205,6 +215,23 @@ the ugly hacks therein :-)</li>
         'NoMarConst': 'rgb(244, 109, 67)',
         'NoCUConst': 'rgb(215, 48, 39)'
     };
+    function getCursorPosition(e) {
+        /* returns Cell with .row and .column properties */
+        var x;
+        var y;
+        var canvas = document.getElementById('mapCanvas');
+        if (e.pageX != undefined && e.pageY != undefined) {
+            x = e.pageX;
+            y = e.pageY;
+        }
+        else {
+            x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+        x -= canvas.offsetLeft;
+        y -= canvas.offsetTop;
+        return [x, y];
+    }
     function getFlashingColor(origColor) {
         var rgbRe = /rgb\((\d+), (\d+), (\d+)\)/;
         var rgbMatch = rgbRe.exec(origColor);
@@ -249,6 +276,8 @@ the ugly hacks therein :-)</li>
     // change anytime soon.
     var stateNames = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'};
     var currentMapStatus = {};
+    var useCartogram = false;
+    var selectedPostalCode = undefined;
     if (!Array.prototype.map)
     {
       Array.prototype.map = function(fun /*, thisp*/)
@@ -309,7 +338,8 @@ the ugly hacks therein :-)</li>
             htmlData.push('</ul>');
         }
         $('#stateData').html(htmlData.join('\n'));
-        updateHash(slider.getRealValue(), postalCode);
+        selectedPostalCode = postalCode;
+        updateHash(slider.getRealValue(), postalCode, useCartogram);
     }
     function updateMapTitles() {
         var areas = $('#mapMap area');
@@ -326,12 +356,20 @@ the ugly hacks therein :-)</li>
             }
         }
     }
-    function updateHash(year, postalCode) {
+    function getHash(year, postalCode, useCartogram) {
+        var newHash;
         if (postalCode == undefined) {
-            location.hash = "year=" + year[0] + "-" + year[1];
+            newHash = "year=" + year[0] + "-" + year[1];
         } else {
-            location.hash = "year=" + year[0] + "-" + year[1] + "&state=" + postalCode;
-       }
+            newHash = "year=" + year[0] + "-" + year[1] + "&state=" + postalCode;
+        }
+        if (useCartogram) {
+            newHash += '&cartogram=1';
+        }
+        return newHash;
+    }
+    function updateHash(year, postalCode, useCartogram) {
+        location.hash = getHash(year, postalCode, useCartogram);
     }
 
     /**
@@ -402,8 +440,6 @@ the ugly hacks therein :-)</li>
         return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     };
 
-
-
     function flashStates(type) {
         return function() {
             var numTimesLeft = 2;
@@ -436,7 +472,7 @@ the ugly hacks therein :-)</li>
         }
         clearMap();
         updateMapTitles();
-        drawMap(flashType);
+        drawMap(flashType, useCartogram);
         return;
 
         // This is the code for incremental redraw that 
@@ -449,7 +485,7 @@ the ugly hacks therein :-)</li>
             if (newStatus != currentMapStatus[stateName]) {
                 changedStates.push(stateName);
                 currentMapStatus[stateName] = newStatus;
-                drawState(stateName, mapColors[currentMapStatus[stateName]], false);
+                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName]], false);
             }
         }
         for (var i in changedStates) {
@@ -464,25 +500,29 @@ the ugly hacks therein :-)</li>
         ctx.clearRect(0, 0, document.getElementById('mapCanvas').width, document.getElementById('mapCanvas').height);
     }
     var legendImage;
-    function drawMap(flashType) {
+    function drawMap(flashType, useCartogram) {
         var flashingColor = flashType ? getFlashingColor(mapColors[flashType]) : "";
         for (var stateName in stateSvgPaths) {
             if (currentMapStatus[stateName] == flashType) {
-                drawState(stateName, flashingColor);
+                drawState(stateName, useCartogram, flashingColor);
             } else {
-                drawState(stateName, mapColors[currentMapStatus[stateName]]);
+                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName]]);
             }
         }
         for (var stateName in statenamepositions) {
-            drawStateName(stateName);
+            drawStateName(stateName, useCartogram);
         }
         var translation = scalePoint([0, -131.9412]);
         //var translation = scalePoint([-43.12533, -131.9412]);
-        for (var i = 0; i < stateLabelPaths.length; ++i) {
-            drawSvgPath(stateLabelPaths[i], translation, "black", .5);
+        if (!useCartogram) {
+            for (var i = 0; i < stateLabelPaths.length; ++i) {
+                drawSvgPath(stateLabelPaths[i], translation, "black", .5);
+            }
         }
         translation[0] += 10;
-        drawSvgPath(insetBox, translation, "black", 1, DRAW_SVG_NOFILL);
+        if (!useCartogram) {
+            drawSvgPath(insetBox, translation, "black", 1, DRAW_SVG_NOFILL);
+        }
         if (!legendImage) {
             legendImage = new Image();
             legendImage.onload = function() {
@@ -537,7 +577,8 @@ the ugly hacks therein :-)</li>
         } else {
             // Here the date has not changed, but we still want to update
             // the hash and animation data.
-            updateHash(realValue);
+            selectedPostalCode = undefined;
+            updateHash(realValue, undefined, useCartogram);
             showAnimationData(realValue);
         }
     }
@@ -589,6 +630,30 @@ the ugly hacks therein :-)</li>
         } else {
             $('#stateData').html('');
         }
+    }
+    function updateCartogramFromValue(newValue) {
+        useCartogram = newValue;
+        $('#mapMap').disabled = useCartogram;
+        $('#mapMap area').disabled = useCartogram;
+        $('#mapMap area').visible = !useCartogram;
+        if (useCartogram) {
+            $('#imageMapMap')[0].style.width = '0px';
+            $('#imageMapMap')[0].style.height = '0px';
+        } else {
+            $('#imageMapMap')[0].style.width = '800px';
+            $('#imageMapMap')[0].style.height = '495px';
+        }
+        /*$('#imageMapMap').disabled = useCartogram;
+        $('#imageMapMap').visible = !useCartogram;*/
+
+    }
+    function updateCartogramFromCheckbox() {
+        updateCartogramFromValue($('#cartogramCheckbox').attr('checked'));
+        updateHash(slider.getRealValue(), selectedPostalCode, useCartogram);
+    }
+    function updateCartogram() {
+        updateCartogramFromCheckbox();
+        redrawMap(slider.getRealValue());
     }
     function updateAnimationSpeed() {
         var val = parseInt($("input[name='animationSpeed']:checked").val());
@@ -666,6 +731,7 @@ the ugly hacks therein :-)</li>
         // Update animation speed.
         updateAnimationSpeed();
         $("input[name='animationSpeed']").change(updateAnimationSpeed);
+        $("#cartogramCheckbox").click(updateCartogram);
 
         // Initialize map status
         for (var stateName in stateSvgPaths) {
@@ -677,12 +743,43 @@ the ugly hacks therein :-)</li>
             var elem = areas[i];
             if (elem.hash.length == 3) {
                 elem.onclick = function() {
-                    var postalCode = this.href.substr(this.href.length - 2);
-                    showStateData(postalCode, stateNames[postalCode]);
-                    return false;
+                    if (!useCartogram) {
+                        var postalCode = this.href.substr(this.href.length - 2);
+                        showStateData(postalCode, stateNames[postalCode]);
+                        return false;
+                    }
                 }
             }
         }
+        canvas.addEventListener('click', function(e) {
+            var pos, postalCode, i, l, data;
+            if (useCartogram) {
+                var pos = getCursorPosition(e);
+                // correct translation
+                pos[0] *= 1.0/0.6;
+                pos[1] *= 1.0/0.6;
+                pos[0] -= 25;
+                pos[1] += 100;
+
+                pos[0] -= pos[0] % 25;
+                pos[1] = (pos[1] - 2 - ((pos[1] - 2) % 25)) + 2;
+                //alert(pos);
+                for (postalCode in cartogramBoxes) {
+                    if (cartogramBoxes.hasOwnProperty(postalCode)) {
+                        data = cartogramBoxes[postalCode];
+                        l = data.length;
+                        for (i = 0; i < l; i += 1) {
+                            if (data[i][0] === pos[0] && data[i][1] === pos[1]) {
+                                //alert('selecting ' + postalCode);
+                                showStateData(postalCode, stateNames[postalCode]);
+                                return;
+                            }
+                        }
+                    }
+                }
+                //alert(pos);
+            }
+        }, false);
 
         // Initialize stateDateDataHash
         for (var postalCode in marriagedata) {
@@ -737,7 +834,8 @@ the ugly hacks therein :-)</li>
             $('#slider-bg').attr('title', printedValue);
 
             redrawMap(actualValue);
-            updateHash(actualValue);
+            selectedPostalCode = undefined;
+            updateHash(actualValue, undefined, useCartogram);
             showAnimationData(actualValue);
 
         });
@@ -745,17 +843,22 @@ the ugly hacks therein :-)</li>
             var hashVals = location.hash.substr(1).split('&').map(function(x) { return x.split('=')});
             var dateToSet = curYear;
             var stateToSet = undefined;
+            var tempUseCartogram = false;
             for (var i in hashVals) {
                 if (hashVals[i][0] == 'year') {
                     dateToSet = hashVals[i][1].split('-').map(function(x) { return parseInt(x, 10);});
                 } else if (hashVals[i][0] == 'state') {
                     stateToSet = hashVals[i][1];
                 }
+                else if (hashVals[i][0] == 'cartogram') {
+                    tempUseCartogram = (hashVals[i][1] !== 0);
+                }
             }
+            updateCartogramFromValue(tempUseCartogram);
             goToDate(dateToSet[0], dateToSet[1]);
-            // Wait for the location.hash to change.
-            var expectedHash = "#year=" + dateToSet[0] + "-" + dateToSet[1];
             if (stateToSet != undefined) {
+                // Wait for the location.hash to change.
+                var expectedHash = '#' + getHash(dateToSet, undefined, tempUseCartogram);
                 waitForHashThenChangeState(expectedHash, stateToSet);
             }
         } else {
@@ -764,7 +867,7 @@ the ugly hacks therein :-)</li>
 
     }
     function waitForHashThenChangeState(expectedHash, stateToSet) {
-        if (location.hash == expectedHash) {
+        if (location.hash === expectedHash) {
             showStateData(stateToSet, stateNames[stateToSet]);
             return;
         }

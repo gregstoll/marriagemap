@@ -64,7 +64,9 @@
 </head>
 <body>
     <h1>Same-sex marriage in the United States</h1>
-    <table><tr><td>
+    <table>
+        <tr><td><div id="pendingDiv" style="display: none;"><span>Pending actions:</span><ul id="pendingUl"></ul></div></td></tr>
+        <tr><td>
     <div class="canvasWrapper">
         <canvas id="mapCanvas" width="850" height="495"></canvas>
         <img width="800" height="495" src="images/spacer.gif" id="imageMapMap" usemap="#mapMap" style="width: 800px; height: 495px;" alt="">
@@ -297,6 +299,14 @@ the ugly hacks therein :-)</li>
         return res;
       };
     }
+    if(!Object.keys) Object.keys = function(o){
+       if (o !== Object(o))
+        throw new TypeError('Object.keys called on non-object');
+       var ret=[],p;
+       for(p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
+       return ret;
+    }
+
     var ctx;
     function compareYear(year1, year2) {
         if (year1[0] < year2[0] || (year1[0] == year2[0] && year1[1] < year2[1])) {
@@ -462,6 +472,64 @@ the ugly hacks therein :-)</li>
             }
             flashMap();
         }();
+    }
+    function getPendingStatus(postalCode, year) {
+        var stateMarriageData = marriagedata[postalCode];
+        var curPending = undefined;
+        var i, props, testYear, testPropYear, eventHasExpired;
+        for (i = 0; i < stateMarriageData.length; ++i) {
+            testYear = stateMarriageData[i][0].split('-').map(function(x) { return parseInt(x, 10);});
+            if (compareYear(testYear, year) <= 0) {
+                if (stateMarriageData[i].length >= 4) {
+                    props = stateMarriageData[i][3];
+                    if (props.hasOwnProperty('pending')) {
+                        if (props.hasOwnProperty('clear') && props['clear']) {
+                            curPending = undefined;
+                        } else {
+                            eventHasExpired = false;
+                            // See when this expires (if ever)
+                            if (props['pending'].hasOwnProperty('date')) {
+                                testPropYear = props['pending']['date'].split('-').map(function(x) { return parseInt(x, 10);});
+                                // if it expires this month, still show it
+                                if (compareYear(testPropYear, year) < 0) {
+                                    eventHasExpired = true;
+                                }
+                            }
+                            if (!eventHasExpired) {
+                                curPending = props['pending'];
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Assumes the marriage data is in sorted order.
+                break;
+            }
+        }
+        return curPending;
+    }
+    function updatePending(year) {
+        var pendingData = {}, postalCode, statePending, i, stateKeys, htmlData = [];
+        // adjust to the previous
+        for (postalCode in stateSvgPaths) {
+            statePending = getPendingStatus(postalCode, year);
+            if (statePending) {
+                pendingData[postalCode] = statePending;
+            }
+        }
+        stateKeys = Object.keys(pendingData);
+        if (stateKeys.length > 0) {
+            $('#pendingDiv').css('display', 'block');
+            $('#pendingUl').empty();
+            stateKeys.sort();
+            for (i = 0; i < stateKeys.length; i++) {
+                postalCode = stateKeys[i];
+                htmlData.push('<li><b><a href="javascript:showStateData(\'' + postalCode + '\', \'' + stateNames[postalCode] + '\');">' + stateNames[postalCode] + '</a></b>: ' + pendingData[postalCode]['description'] + '</li>');
+            }
+            $('#pendingUl').append(htmlData.join('\n'));
+        } else {
+            $('#pendingDiv').css('display', 'none');
+        }
     }
     function redrawMap(newYear, flashType) {
         // A full redraw looks better, and is fast enough.
@@ -839,6 +907,7 @@ the ugly hacks therein :-)</li>
             showAnimationData(actualValue);
 
         });
+        updatePending([(new Date()).getFullYear(), (new Date()).getMonth() + 1]);
         if (location.hash.length > 1) {
             var hashVals = location.hash.substr(1).split('&').map(function(x) { return x.split('=')});
             var dateToSet = curYear;

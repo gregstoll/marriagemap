@@ -783,7 +783,7 @@ the ugly hacks therein :-)</li>
         // http://marriagelaw.cua.edu/law/states/AL.cfm
         // http://www.domawatch.org/stateissues/alaska/index.html
         // http://ballotpedia.org/wiki/index.php/Marriage-related_ballot_measures_and_initiatives
-        $.getJSON('marriagedata.js', function(data) {
+        $.getJSON('marriagedata.js?random=' + Math.random(), function(data) {
             marriagedata = data;
             doRestOfStartUp();
         });

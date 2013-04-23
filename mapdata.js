@@ -312,7 +312,10 @@ var cartogramStateNamePoints =
     'SC': [698.75, 571.61218],
     'AK': [53.75, 71.625],
 }
-    function drawState(state, useCartogram, color, onlyDrawInside) {
+    function drawState(state, useCartogram, color, onlyDrawInside, scaleFactor) {
+        if (!scaleFactor) {
+            scaleFactor = 1.0;
+        }
         if (!color) {
             color = '#FFFFFF';
         }
@@ -321,9 +324,9 @@ var cartogramStateNamePoints =
         translation = scalePoint([0, -131.9412]);
         //alert('state: ' + state + ', translation ' + translation);
         if (!useCartogram) {
-            drawSvgPath(stateSvgPaths[state], translation, color, 1, onlyDrawInside ? DRAW_SVG_ONLYFILL : DRAW_SVG_FILL);
+            drawSvgPath(stateSvgPaths[state], translation, color, 1, onlyDrawInside ? DRAW_SVG_ONLYFILL : DRAW_SVG_FILL, false, [scaleFactor, scaleFactor]);
             if (state in statenameboxSvgPaths) {
-                drawSvgPath(statenameboxSvgPaths[state], translation, color, 1, DRAW_SVG_ONLYFILL);
+                drawSvgPath(statenameboxSvgPaths[state], translation, color, 1, DRAW_SVG_ONLYFILL, false, [scaleFactor, scaleFactor]);
             }
         } else {
             if (state in cartogramBoxes) {
@@ -364,7 +367,10 @@ var cartogramStateNamePoints =
             point[1] = point[1] * .912 + 12;
         }
     }
-    function drawStateName(stateName, useCartogram) {
+    function drawStateName(stateName, useCartogram, scaleFactor) {
+        if (!scaleFactor) {
+            scaleFactor = 1.0;
+        }
         if (!useCartogram) {
             var translation = scalePoint([0, -131.9412]);
             if (!(stateName in statenameimages)) {
@@ -374,6 +380,9 @@ var cartogramStateNamePoints =
                     var point = scalePoint(statenamepositions[stateName]);
                     //alert('drawing at ' + point);
                     ctx.save();
+                    if (scaleFactor != 1.0) {
+                        ctx.scale(scaleFactor, scaleFactor);
+                    }
                     ctx.translate(translation[0], translation[1]);
                     /*if (isIE) {
                         fixStateNamePositionForIE(stateName, point);

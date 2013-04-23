@@ -69,10 +69,10 @@
     <h1>Same-sex marriage in the United States</h1>
     <table>
         <tr><td><div id="pendingDiv" style="display: none; margin-top:-5px;"><span>On the horizon:</span><ul id="pendingUl" style="margin-top:0px;"></ul></div></td></tr>
-        <tr><td style="width: 850px; height: 495px;">
+        <tr><td style="width: 1700px; height: 990px;">
         <div class="canvasWrapper">
-        <canvas id="mapCanvas" width="850" height="495"></canvas>
-        <img width="800" height="495" src="images/spacer.gif" id="imageMapMap" usemap="#mapMap" style="width: 800px; height: 495px;" alt="">
+        <canvas id="mapCanvas" width="1700" height="990"></canvas>
+        <img width="1600" height="990" src="images/spacer.gif" id="imageMapMap" usemap="#mapMap" style="width: 1600px; height: 990px;" alt="">
     </div></td><td style="vertical-align: bottom;">
     <form class="compact" action="javascript:void(0);"><table>
             <tr><td><input type="checkbox" id="cartogramCheckbox"><label for="cartogramCheckbox">Cartogram</label></td></tr>
@@ -576,30 +576,30 @@ the ugly hacks therein :-)</li>
         var flashingColor = flashType ? getFlashingColor(mapColors[flashType]) : "";
         for (var stateName in stateSvgPaths) {
             if (currentMapStatus[stateName] == flashType) {
-                drawState(stateName, useCartogram, flashingColor);
+                drawState(stateName, useCartogram, flashingColor, false, 2.0);
             } else {
-                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName]]);
+                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName]], false, 2.0);
             }
         }
         for (var stateName in statenamepositions) {
-            drawStateName(stateName, useCartogram);
+            drawStateName(stateName, useCartogram, 2.0);
         }
         var translation = scalePoint([0, -131.9412]);
         //var translation = scalePoint([-43.12533, -131.9412]);
         if (!useCartogram) {
             for (var i = 0; i < stateLabelPaths.length; ++i) {
-                drawSvgPath(stateLabelPaths[i], translation, "black", .5);
+                drawSvgPath(stateLabelPaths[i], translation, "black", .5, 0, false, [2.0, 2.0]);
             }
         }
         translation[0] += 10;
         if (!useCartogram) {
-            drawSvgPath(insetBox, translation, "black", 1, DRAW_SVG_NOFILL);
+            drawSvgPath(insetBox, translation, "black", 1, DRAW_SVG_NOFILL, undefined, [2.0, 2.0]);
         }
         if (!legendImage) {
             legendImage = new Image();
             legendImage.onload = function() {
                 ctx.save();
-                ctx.translate(translation[0], translation[1]);
+                ctx.translate(translation[0]*2.0, translation[1]*2.0);
                 var legendX = scaleValue(810);
                 var legendY = scaleValue(600);
                 if (isIE) {
@@ -607,13 +607,13 @@ the ugly hacks therein :-)</li>
                     legendX *= .912;
                     legendY *= .93;
                 }
-                ctx.drawImage(legendImage, legendX, legendY, scaleValue(legendImage.width), scaleValue(legendImage.height));
+                ctx.drawImage(legendImage, legendX*2.0, legendY*2.0, scaleValue(legendImage.width)*2.0, scaleValue(legendImage.height)*2.0);
                 ctx.restore();
             };
             legendImage.src = 'images/legend.png';
         } else {
             ctx.save();
-            ctx.translate(translation[0], translation[1]);
+            ctx.translate(translation[0]*2.0, translation[1]*2.0);
             var legendX = scaleValue(810);
             var legendY = scaleValue(600);
             if (isIE) {
@@ -621,18 +621,18 @@ the ugly hacks therein :-)</li>
                 legendX *= .912;
                 legendY *= .93;
             }
-            ctx.drawImage(legendImage, legendX, legendY, scaleValue(legendImage.width), scaleValue(legendImage.height));
+            ctx.drawImage(legendImage, legendX*2.0, legendY*2.0, scaleValue(legendImage.width)*2.0, scaleValue(legendImage.height)*2.0);
             ctx.restore();
         }
         // Draw the color boxes for the legend.
         ctx.save();
-        ctx.translate(translation[0], translation[1]);
-        var curY = scaleValue(600);
+        ctx.translate(translation[0]*2.0, translation[1]*2.0);
+        var curY = scaleValue(600)*2.0;
         for (var i = 0; i < mapTypes.length; ++i) {
             var mapType = mapTypes[i];
             ctx.fillStyle = mapColors[mapType];
-            ctx.fillRect(scaleValue(790), curY, 15, 13);
-            curY += scaleValue(13);
+            ctx.fillRect(scaleValue(790)*2.0, curY, 15*2.0, 13*2.0);
+            curY += scaleValue(13)*2.0;
         }
         ctx.restore();
         
@@ -712,8 +712,8 @@ the ugly hacks therein :-)</li>
             $('#imageMapMap')[0].style.width = '0px';
             $('#imageMapMap')[0].style.height = '0px';
         } else {
-            $('#imageMapMap')[0].style.width = '800px';
-            $('#imageMapMap')[0].style.height = '495px';
+            $('#imageMapMap')[0].style.width = '1600px';
+            $('#imageMapMap')[0].style.height = '990px';
         }
         /*$('#imageMapMap').disabled = useCartogram;
         $('#imageMapMap').visible = !useCartogram;*/
@@ -755,7 +755,7 @@ the ugly hacks therein :-)</li>
     var pixelsPerMonthGroup = 8;
     // If you change this, you'll need to change values in the CSS section
     // at the top.
-    var curYear = [(new Date()).getFullYear(), Math.floor((new Date()).getMonth()/monthGroupInterval)*monthGroupInterval + monthGroupInterval];
+    var curYear = [(new Date()).getFullYear() + 1, Math.floor((new Date()).getMonth()/monthGroupInterval)*monthGroupInterval + monthGroupInterval];
     var endYear = curYear;
     // Take the latest time that something happened.
     for (var postalCode in marriagedata) {
@@ -911,7 +911,7 @@ the ugly hacks therein :-)</li>
             showAnimationData(actualValue);
 
         });
-        updatePending([(new Date()).getFullYear(), (new Date()).getMonth() + 1]);
+        updatePending([(new Date()).getFullYear()+1, (new Date()).getMonth() + 1]);
         if (location.hash.length > 1) {
             var hashVals = location.hash.substr(1).split('&').map(function(x) { return x.split('=')});
             var dateToSet = curYear;

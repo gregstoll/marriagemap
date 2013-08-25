@@ -374,19 +374,23 @@ the ugly hacks therein :-)</li>
         }
     }
     function getHash(year, postalCode, useCartogram) {
-        var newHash;
-        if (postalCode == undefined) {
-            newHash = "year=" + year[0] + "-" + year[1];
-        } else {
-            newHash = "year=" + year[0] + "-" + year[1] + "&state=" + postalCode;
+        var newHash = "";
+        //newHash = "year=" + year[0] + "-" + year[1];
+        if (postalCode != undefined) {
+            if (newHash != "") newHash += "&";
+            newHash += "state=" + postalCode;
         }
         if (useCartogram) {
-            newHash += '&cartogram=1';
+            if (newHash != "") newHash += "&";
+            newHash += 'cartogram=1';
         }
         return newHash;
     }
     function updateHash(year, postalCode, useCartogram) {
-        location.hash = getHash(year, postalCode, useCartogram);
+        var hash = getHash(year, postalCode, useCartogram);
+        if (hash != location.hash) {
+            location.hash = hash;
+        }
     }
 
     /**

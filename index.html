@@ -952,7 +952,7 @@ the ugly hacks therein :-)</li>
 
     }
     function waitForHashThenChangeState(expectedHash, stateToSet) {
-        if (location.hash === expectedHash) {
+        if (location.hash === expectedHash || (expectedHash == '#' && location.hash == '')) {
             showStateData(stateToSet, stateNames[stateToSet]);
             return;
         }

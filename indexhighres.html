@@ -946,9 +946,27 @@ the ugly hacks therein :-)</li>
         }
         setTimeout(function() {waitForHashThenChangeState(expectedHash, stateToSet);}, 750);
     }
-   </script>
+    var oldUrl = undefined;
+    function saveCanvasImage() {
+        var img = document.getElementById('exportCanvasImg');
+        var canvas = document.getElementById('mapCanvas');
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+        canvas.toBlob(function(blob) {
+            var url = URL.createObjectURL(blob);
+            img.onload = function() {
+                if (oldUrl !== undefined) {
+                    URL.revokeObjectURL(oldUrl);
+                }
+                oldUrl = url;
+            }
+            img.src = url;
+        });
+    }
+    </script>
  
    <p><a href="/">Greg's home page</a></p>
+   <p><button onclick="saveCanvasImage();">generate image (only works in Firefox)</button></p>
+   <p><img id="exportCanvasImg"></p>
 <!--#include virtual="/endOfBody.html"-->
 </body>
 </html>

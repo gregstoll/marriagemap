@@ -372,6 +372,21 @@ var cartogramStateNamePoints =
             scaleFactor = 1.0;
         }
         if (!useCartogram) {
+            if (false) {
+                // this code works, but the text looks very dark and I can't figure out why...
+                var translation = scalePoint([0, -131.9412]);
+                var fullName = stateNames[stateName];
+                var point = scalePoint(statenamepositions[stateName]);
+                ctx.save();
+                ctx.textBaseline = 'top';
+                if (scaleFactor != 1.0) {
+                    ctx.scale(scaleFactor, scaleFactor);
+                }
+                ctx.translate(translation[0], translation[1]);
+                ctx.font = '100 8pt sans-serif';
+                ctx.strokeText(fullName, point[0], point[1] - scaleValue(10)/2);
+                ctx.restore();
+            }
             var translation = scalePoint([0, -131.9412]);
             if (!(stateName in statenameimages)) {
                 var im = new Image();

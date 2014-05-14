@@ -312,21 +312,37 @@ var cartogramStateNamePoints =
     'SC': [698.75, 571.61218],
     'AK': [53.75, 71.625],
 }
-    function drawState(state, useCartogram, color, onlyDrawInside, scaleFactor) {
+    function drawState(state, useCartogram, color, onlyDrawInside, scaleFactor, courtOverturnedBan) {
+        var colorToDraw;
         if (!scaleFactor) {
             scaleFactor = 1.0;
         }
         if (!color) {
             color = '#FFFFFF';
         }
+        if (!courtOverturnedBan) {
+            courtOverturnedBan = 0;
+        }
         var translation = [0,0];
         //translation = scalePoint([-43.12533, -131.9412]);
         translation = scalePoint([0, -131.9412]);
         //alert('state: ' + state + ', translation ' + translation);
         if (!useCartogram) {
-            drawSvgPath(stateSvgPaths[state], translation, color, 1, onlyDrawInside ? DRAW_SVG_ONLYFILL : DRAW_SVG_FILL, false, [scaleFactor, scaleFactor]);
+            colorToDraw = color;
+            if (courtOverturnedBan == 1) {
+                // gradient
+                var boundingBox = calculateBoundingBox(stateSvgPaths[state], translation, false, [scaleFactor, scaleFactor]);
+                //var gradient = ctx.createLinearGradient(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+                var gradient = ctx.createLinearGradient(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[1]);
+                gradient.addColorStop(0.0, color);
+                gradient.addColorStop(0.4, color);
+                gradient.addColorStop(1.0, "rgb(20, 118, 255)");
+                //gradient.addColorStop(1.0, "#0000FF");
+                colorToDraw = gradient;
+            }
+            drawSvgPath(stateSvgPaths[state], translation, colorToDraw, 1, onlyDrawInside ? DRAW_SVG_ONLYFILL : DRAW_SVG_FILL, false, [scaleFactor, scaleFactor]);
             if (state in statenameboxSvgPaths) {
-                drawSvgPath(statenameboxSvgPaths[state], translation, color, 1, DRAW_SVG_ONLYFILL, false, [scaleFactor, scaleFactor]);
+                drawSvgPath(statenameboxSvgPaths[state], translation, colorToDraw, 1, DRAW_SVG_ONLYFILL, false, [scaleFactor, scaleFactor]);
             }
         } else {
             if (state in cartogramBoxes) {
@@ -455,6 +471,61 @@ var cartogramStateNamePoints =
         } else {
             return scalePoint(tempPoint);
         }
+    }
+
+    // Returns [x1, y1, x2, y2]
+    function calculateBoundingBox(data, translation, skipScaling, scaleFactor) {
+        var boundingBox = [10000, 10000, -10000, -10000];
+        var commands = data.split(' ');
+        var index = 0;
+        function updateBoundingBox(point) {
+            var pointX = point[0] * scaleFactor[0] - translation[0];
+            var pointY = point[1] * scaleFactor[1] - translation[1];
+            boundingBox[0] = Math.min(pointX, boundingBox[0]);
+            boundingBox[1] = Math.min(pointY, boundingBox[1]);
+            boundingBox[2] = Math.max(pointX, boundingBox[2]);
+            boundingBox[3] = Math.max(pointY, boundingBox[3]);
+        }
+        while (index < commands.length) {
+            var command = commands[index++];
+            switch (command) {
+                case 'M':
+                    // Move
+                    var pointCoords = getPoint(commands[index++], skipScaling);
+                    //alert('m ' + pointCoords[0] + ' ' + pointCoords[1]);
+                    curPoint = [pointCoords[0], pointCoords[1]];
+                    break;
+                case 'L':
+                    // Straight line
+                    var pointCoords = getPoint(commands[index++], skipScaling);
+                    updateBoundingBox(curPoint);
+                    updateBoundingBox(pointCoords);
+                    curPoint = [pointCoords[0], pointCoords[1]];
+                    break;
+                case 'C':
+                    // Cubic Bezier curve
+                    var point1 = getPoint(commands[index++], skipScaling);
+                    var point2 = getPoint(commands[index++], skipScaling);
+                    var point3 = getPoint(commands[index++], skipScaling);
+                    updateBoundingBox(curPoint);
+                    updateBoundingBox(point3);
+                    curPoint = [point3[0], point3[1]];
+                    break;
+ 
+                case 'z':
+                    // Close path
+                    // filling, stuff go here.
+                    ctx.beginPath();
+                    break;
+                case '':
+                    // just at end of string, no worries
+                    break;
+                default:
+                    alert('unknown command "' + command + '" at position ' + index + ' (curPoint ' + curPoint + ')');
+                    index = commands.length;
+            }
+        }
+        return boundingBox;
     }
 
     var DRAW_SVG_FILL = 0;

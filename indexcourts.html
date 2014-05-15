@@ -78,12 +78,15 @@
         <img width="800" height="495" src="images/spacer.gif" id="imageMapMap" usemap="#mapMap" style="width: 800px; height: 495px;" alt="">
     </div></td><td style="vertical-align: bottom;">
     <form class="compact" action="javascript:void(0);"><table>
-            <tr><td><input type="checkbox" id="cartogramCheckbox"><label for="cartogramCheckbox">Cartogram</label></td></tr>
-            <tr><td><input type="radio" name="animationSpeed" value="0">Very slow</td></tr>
-            <tr><td><input type="radio" name="animationSpeed" value="1">Slow</td></tr>
-            <tr><td><input type="radio" name="animationSpeed" value="2">Medium</td></tr>
-            <tr><td><input type="radio" name="animationSpeed" value="3" checked="checked">Fast</td></tr>
-            <tr><td><input type="radio" name="animationSpeed" value="4">Very fast</td></tr>
+            <tr><td><label for="cartogramCheckbox">Cartogram </label><input type="checkbox" id="cartogramCheckbox"></td></tr>
+            <tr><td>Animation speed: <select id="animationSpeed" name="animationSpeed">
+                <option value="0">Very slow</option>
+                <option value="1">Slow</option>
+                <option value="2">Medium</option>
+                <option value="3" selected>Fast</option>
+                <option value="4">Very fast</option>
+            </select></td></tr>
+            <tr><td><label for="courtOverturnedBanGradient">Rainbow color for court-overturned bans </label><input type="checkbox" id="courtOverturnedBanGradient" checked="checked"></td></tr>
     </table></form>
 </td></tr></table>
     <table>
@@ -567,7 +570,8 @@ the ugly hacks therein :-)</li>
         }
         clearMap();
         updateMapTitles();
-        drawMap(flashType, useCartogram);
+        var courtOverturnedBanGradient = $('#courtOverturnedBanGradient')[0].checked;
+        drawMap(flashType, useCartogram, courtOverturnedBanGradient);
         return;
 
         // This is the code for incremental redraw that 
@@ -595,13 +599,15 @@ the ugly hacks therein :-)</li>
         ctx.clearRect(0, 0, document.getElementById('mapCanvas').width, document.getElementById('mapCanvas').height);
     }
     var legendImage;
-    function drawMap(flashType, useCartogram) {
+    function drawMap(flashType, useCartogram, courtOverturnedBanGradient) {
+        var courtOverturnedBan;
         var flashingColor = flashType ? getFlashingColor(mapColors[flashType]) : "";
         for (var stateName in stateSvgPaths) {
+            courtOverturnedBan = courtOverturnedBanGradient ? currentMapStatus[stateName][1] : 0;
             if (currentMapStatus[stateName][0] == flashType) {
-                drawState(stateName, useCartogram, flashingColor, false, 1.0, currentMapStatus[stateName][1]);
+                drawState(stateName, useCartogram, flashingColor, false, 1.0, courtOverturnedBan);
             } else {
-                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName][0]], false, 1.0, currentMapStatus[stateName][1]);
+                drawState(stateName, useCartogram, mapColors[currentMapStatus[stateName][0]], false, 1.0, courtOverturnedBan);
             }
         }
         for (var stateName in statenamepositions) {
@@ -748,7 +754,7 @@ the ugly hacks therein :-)</li>
 
     }
     function updateCartogramFromCheckbox() {
-        updateCartogramFromValue($('#cartogramCheckbox').attr('checked'));
+        updateCartogramFromValue($('#cartogramCheckbox')[0].checked);
         updateHash(slider.getRealValue(), selectedPostalCode, useCartogram);
     }
     function updateCartogram() {
@@ -756,7 +762,7 @@ the ugly hacks therein :-)</li>
         redrawMap(slider.getRealValue());
     }
     function updateAnimationSpeed() {
-        var val = parseInt($("input[name='animationSpeed']:checked").val());
+        var val = parseInt($("#animationSpeed").val());
         switch (val) {
             case 0:
                 animationTimeout = isIE ? 7500: 8000;
@@ -830,8 +836,9 @@ the ugly hacks therein :-)</li>
 
         // Update animation speed.
         updateAnimationSpeed();
-        $("input[name='animationSpeed']").change(updateAnimationSpeed);
+        $("#animationSpeed").change(updateAnimationSpeed);
         $("#cartogramCheckbox").click(updateCartogram);
+        $("#courtOverturnedBanGradient").click(function() { redrawMap(slider.getRealValue()); });
 
         // Initialize map status
         for (var stateName in stateSvgPaths) {

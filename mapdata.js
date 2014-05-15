@@ -348,14 +348,28 @@ var cartogramStateNamePoints =
             if (state in cartogramBoxes) {
                 var boxes = cartogramBoxes[state];
                 var l = boxes.length;
+                colorToDraw = color;
+                if (courtOverturnedBan == 1) {
+                    // gradient
+                    //var boundingBox = calculateBoundingBoxCartogram(boxes, [0, -200], false, [.6, .6]);
+                    var boundingBox = calculateBoundingBoxCartogram(boxes, [0, 0], false, [1.0, 1.0]);
+                    //var gradient = ctx.createLinearGradient(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3]);
+                    var gradient = ctx.createLinearGradient(boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[1]);
+                    gradient.addColorStop(0.0, color);
+                    gradient.addColorStop(0.4, color);
+                    gradient.addColorStop(1.0, "rgb(20, 118, 255)");
+                    //gradient.addColorStop(1.0, "#0000FF");
+                    colorToDraw = gradient;
+                }
                 ctx.save();
                 ctx.strokeStyle = "white";
                 ctx.lineWidth = 1;
                 ctx.scale(.6, .6);
-                ctx.fillStyle = color;
+                ctx.fillStyle = colorToDraw;
                 ctx.translate(0, -200);
                 for (var i = 0; i < l; i += 1) {
                     var box = boxes[i];
+                    // HACK - tied to values in calculateBoundingBoxCartogram
                     ctx.fillRect(box[0], box[1] + .36218, 25, 25);
                     ctx.strokeRect(box[0], box[1] + .36218, 25, 25);
                 }
@@ -473,6 +487,26 @@ var cartogramStateNamePoints =
         }
     }
 
+    // Returns [x1, y1, x2, y2]
+    function calculateBoundingBoxCartogram(boxes, translation, skipScaling, scaleFactor) {
+        var boundingBox = [10000, 10000, -10000, -10000];
+        var i = 0;
+        function updateBoundingBoxCartogram(point) {
+            var pointX = point[0] * scaleFactor[0] - translation[0];
+            var pointY = point[1] * scaleFactor[1] - translation[1];
+            boundingBox[0] = Math.min(pointX, boundingBox[0]);
+            boundingBox[1] = Math.min(pointY, boundingBox[1]);
+            boundingBox[2] = Math.max(pointX, boundingBox[2]);
+            boundingBox[3] = Math.max(pointY, boundingBox[3]);
+        }
+        for (i = 0; i < boxes.length; ++i) {
+            // HACK - tied to values in drawState() (cartogram section)
+            updateBoundingBoxCartogram([boxes[i][0], boxes[i][1] + .36218]);
+            updateBoundingBoxCartogram([boxes[i][0] + 25, boxes[i][1] + .36218 + 25]);
+        }
+        return boundingBox;
+    }
+ 
     // Returns [x1, y1, x2, y2]
     function calculateBoundingBox(data, translation, skipScaling, scaleFactor) {
         var boundingBox = [10000, 10000, -10000, -10000];

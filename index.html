@@ -387,7 +387,7 @@ the ugly hacks therein :-)</li>
                 if (title[title.length - 1] != ' ') {
                     title = title + ' ';
                 }
-                title += '- ' + mapDescriptions[currentMapStatus[postalCode]];
+                title += '- ' + mapDescriptions[currentMapStatus[postalCode][0]];
                 elem.title = title;
             }
         }
@@ -842,7 +842,7 @@ the ugly hacks therein :-)</li>
 
         // Initialize map status
         for (var stateName in stateSvgPaths) {
-            currentMapStatus[stateName] = 'None';
+            currentMapStatus[stateName] = ['None', 0];
         }
         // Initialize onclicks for areas
         var areas = $('#mapMap area');

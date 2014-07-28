@@ -195,16 +195,12 @@ on <a href="http://en.wikipedia.org/wiki/File:Cartogram-2008_Electoral_Vote.svg"
 change based on what year we're showing to keep up with population.  Also note
 that small states are slightly overrepresented since every state gets at least
 3 electoral votes.</li>
-<li><b>What's the deal with Oregon?</b> Oregon (and some other states, including Nevada and Colorado) has civil unions, but marriage is against the constitution.  I went with the green color instead of the dark red to emphasize that
+<li><b>What's the deal with Colorado?</b> Colorado (and some other states, including Nevada) has civil unions, but marriage is against the constitution.  I went with the green color instead of the dark red to emphasize that
 same-sex couples do have some rights, which seems more important than the fact
 that marriage is off limits for now.</li>
 <li><b>How did you determine the difference between "Civil unions" and "Civil unions with some rights included in marriage"?</b> I mostly relied on the determination made by the <a href="http://www.hrc.org">Human Rights Campaign</a> - <a href="http://www.hrc.org/files/assets/resources/Relationship_Recognition_Laws_Map.pdf">here's a PDF map</a> of the states that currently recognize same-sex marriage and civil unions.</li>
-<li><b>Where can I find more information about interstate relationship recognition, hospital visitation laws, etc.?</b> The Human Rights Campaign maintains <a href="http://www.hrc.org/about_us/state_laws.asp">a number of maps</a> covering these issues.</li>
+<li><b>Where can I find more information about interstate relationship recognition, hospital visitation laws, etc.?</b> The Human Rights Campaign maintains <a href="http://www.hrc.org/about_us/state_laws.asp">a number of maps</a> covering these issues.  Another good resource is Lambda Legal's <a href="http://www.lambdalegal.org/pending-marriage-equality-cases">map of pending marriage equality cases</a>.</li>
 <li><b>How does the map work?</b> I'm using the <a href="http://en.wikipedia.org/wiki/Canvas_%28HTML_element%29">HTML Canvas</a> to dynamically color the map.  The map itself was adapted from <a href="http://en.wikipedia.org/wiki/File:Map_of_USA_with_state_names.svg">this Wikipedia map</a>, and the clickable regions were taken from that same page, saving me a lot of time and trouble.<br>
-<!-- Note that Internet Explorer does not natively support the HTML Canvas - I'm
-using the <a href="http://code.google.com/p/explorercanvas/">ExplorerCanvas</a> to support it. --></li>
-<!-- <li><b>Why is it so slow in Internet Explorer?</b> See above - the ExplorerCanvas
-is great (I originally didn't think it would be possible to support Internet Explorer) but since it has to translate the Canvas stuff into VML stuff, it's slow.  Sorry!  Try it in Firefox or Safari or Chrome instead to get the full experience.</li> -->
 <li><b>How did you find this data?</b> I did a lot of online research - mostly starting with <a href="http://en.wikipedia.org/wiki/Same-sex_marriage_legislation_in_the_United_States_by_state">the Wikipedia page</a>, the <a href="http://marriagelaw.cua.edu/Law/stateinf.cfm">Marriage Law Project at The Catholic University of America</a>, and <a href="http://www.domawatch.org/stateissues/index.html">domawatch.org</a>.</li>
 <li><b>The labels are all in the wrong place - what's up?</b> Try hitting Shift+Reload or Shift+Refresh to reload the images.</li>
 <li><b>Are the source files available?</b> Yes - aside from the Javascript on this page, the other files are <a href="marriagedata.js.txt">marriagedata.js</a>, which contains all of the same-sex marriage data, and <a href="mapdata.js.txt">mapdata.js</a> which contains most of the drawing logic.  I apologize upfront for

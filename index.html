@@ -90,14 +90,17 @@
     </table></form>
 </td></tr></table>
     <table>
-    <tr><td id="slider-td" style="vertical-align: top; height: 30px;">
-    <div id="slider-bg" class="yui-h-slider" tabindex="-1">
-        <div id="slider-thumb" class="yui-slider-thumb"><img src="http://yui.yahooapis.com/2.7.0/build/slider/assets/thumb-n.gif"></div>
-        <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif" id="slider-background">
-    </div>
-    </td><td style="vertical-align: top;">
-    <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span>&nbsp;<button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
-    </td></tr></table>
+    <tr>
+        <td style="vertical-align: top;">
+            <p style="vertical-align: top; margin: 3px;">Date: <span id="slider-value"></span>&nbsp;<button type="button" onclick="startAnimation();">Play animation</button> <button type="button" onclick="stopAnimation();">Stop</button></p>
+        </td>
+        <td id="slider-td" style="vertical-align: top; height: 30px;">
+            <div id="slider-bg" class="yui-h-slider" tabindex="-1">
+                <div id="slider-thumb" class="yui-slider-thumb"><img src="http://yui.yahooapis.com/2.7.0/build/slider/assets/thumb-n.gif"></div>
+                <img class="slider-background" src="http://yui.yahooapis.com/2.7.0/build/slider/assets/bg-h.gif" id="slider-background">
+            </div>
+        </td>
+    </tr></table>
     <div id="stateData"></div>
 <div>
 <!-- <script type="text/javascript">
@@ -761,16 +764,16 @@ the ugly hacks therein :-)</li>
         var val = parseInt($("#animationSpeed").val());
         switch (val) {
             case 0:
-                animationTimeout = isIE ? 7500: 8000;
-                break;
-            case 1:
                 animationTimeout = isIE ? 3500: 4000;
                 break;
+            case 1:
+                animationTimeout = isIE ? 2500: 2000;
+                break;
             case 2:
-                animationTimeout = isIE ? 1500: 2000;
+                animationTimeout = isIE ? 750: 1000;
                 break;
             case 3:
-                animationTimeout = isIE ? 500: 1000;
+                animationTimeout = isIE ? 500: 500;
                 break;
             case 4:
                 animationTimeout = isIE ? 0: 0;

@@ -1,12 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta charset="utf-8">
   <meta name="msApplication-ID" content="57039gregstoll.com.MarriageMap">
   <meta name="msApplication-PackageFamilyName" content="57039gregstoll.com.MarriageMap_mrfc7nnpdd326">
 
   <title>Same-sex marriage status in the United States</title>
+  <!--#include virtual="/bootstraphead.html"-->
   <script type="text/javascript">
       var isIE = false;
   </script>
@@ -66,12 +66,17 @@
      .importantEntry {
          background-color: #ecf8b9;
      }
+     form label {
+         font-weight: normal;
+     }
    </style>
 </head>
 <body>
+  <!--#include virtual="/navbar.html"-->
+  <div class="container">
     <h1>Same-sex marriage in the United States</h1>
     <table>
-        <tr><td><div id="pendingDiv" style="display: none; margin-top:-5px;"><span>On the horizon: <b><a id="expandContractHorizon" href="javascript:expandContractHorizon();">+</a></b></span><ul style="display: none;" id="pendingUl" style="margin-top:0px;"></ul></div></td></tr>
+        <tr><td><div id="pendingDiv" style="display: none; margin-top:-5px;"><span>On the horizon: <b><a id="expandContractHorizon" href="javascript:expandContractHorizon();">+</a></b></span><ul style="display: none; margin-top: 0px;" id="pendingUl"></ul></div></td></tr>
         <tr><td style="width: 850px; height: 495px;">
         <div class="canvasWrapper">
         <canvas id="mapCanvas" width="850" height="495"></canvas>
@@ -96,8 +101,8 @@
         </td>
         <td id="slider-td" style="vertical-align: top; height: 30px;">
             <div id="slider-bg" class="yui-h-slider" tabindex="-1">
-                <div id="slider-thumb" class="yui-slider-thumb"><img src="yui/thumb-n.gif"></div>
-                <img class="slider-background" src="yui/bg-h.gif" id="slider-background">
+                <div id="slider-thumb" class="yui-slider-thumb"><img src="yui/thumb-n.gif" alt="slider thumb"></div>
+                <img class="slider-background" src="yui/bg-h.gif" id="slider-background" alt="slider background">
             </div>
         </td>
     </tr></table>
@@ -183,7 +188,7 @@ google_ad_height = 90;
 <area href="javascript:flashStates('NoMarConst');" shape="rect" coords="670,458,831,470" alt="Flash states with marriage illegal in constitution" title="Flash states with marriage illegal in constitution" />
 <area href="javascript:flashStates('NoCUConst');" shape="rect" coords="670,470,831,481" alt="Flash states with civil unions illegal in constitution" title="Flash states with civil unions illegal in constitution" />
         </map>
-        <p>Also available <a href="http://apps.microsoft.com/webpdp/en-us/app/marriage-map/f5f57402-2472-4fc4-a27a-0320fb6294d9">on the Windows Store</a>, on the Windows Phone Marketplace: <a href="http://www.windowsphone.com/s?appid=07d33830-0e19-42b9-b371-abed7f1fcebe"><img src="DownloadWPSmall.png" title="Download it on the Windows Phone Marketplace" alt="Download it on the Windows Phone Marketplace"></a>, and on the HP TouchPad: <a href="http://developer.palm.com/appredirect/?packageid=com.gregstoll.marriagemap"><img alt="Download it on the HP App Catalog" title="Download it on the HP App Catalog" src="appcatalog.png" border="0"></a></p>
+        <p>Also available <a href="http://apps.microsoft.com/webpdp/en-us/app/marriage-map/f5f57402-2472-4fc4-a27a-0320fb6294d9">on the Windows Store</a>, on the Windows Phone Marketplace: <a href="http://www.windowsphone.com/s?appid=07d33830-0e19-42b9-b371-abed7f1fcebe"><img src="DownloadWPSmall.png" title="Download it on the Windows Phone Marketplace" alt="Download it on the Windows Phone Marketplace"></a>, and on the HP TouchPad: <a href="http://developer.palm.com/appredirect/?packageid=com.gregstoll.marriagemap"><img alt="Download it on the HP App Catalog" title="Download it on the HP App Catalog" src="appcatalog.png"></a></p>
         <p>Here's <a href="http://terrymun.com/playground/data-in-equality/">another nice visualization</a> based on this data - check it out!</p>
         <h1 id="faq" style="clear: both;">FAQ:</h1>
         <ul>
@@ -789,7 +794,8 @@ the ugly hacks therein :-)</li>
     var pixelsPerMonthGroup = 8;
     // If you change this, you'll need to change values in the CSS section
     // at the top.
-    var curYear = [(new Date()).getFullYear(), Math.floor((new Date()).getMonth()/monthGroupInterval)*monthGroupInterval + monthGroupInterval];
+    //var curYear = [(new Date()).getFullYear(), Math.floor((new Date()).getMonth()/monthGroupInterval)*monthGroupInterval + monthGroupInterval];
+    var curYear = [2015, 6];
     var endYear = curYear;
     // Take the latest time that something happened.
     for (var postalCode in marriagedata) {
@@ -1001,8 +1007,8 @@ the ugly hacks therein :-)</li>
    </script>
  
    <p><button onclick="saveCanvasImage();">generate image (only works in Firefox)</button></p>
-   <p><img id="exportCanvasImg"></p>
-   <p><a href="/">Greg's home page</a></p>
+   <p><img id="exportCanvasImg" src="#" alt="generated image"></p>
 <!--#include virtual="/endOfBody.html"-->
+</div>
 </body>
 </html>

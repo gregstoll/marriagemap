@@ -1,0 +1,2 @@
+- need to add data/ stuff to us-state-map docs
+- use JS + definition files for us-state-map

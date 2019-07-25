@@ -12,37 +12,37 @@
 // http://marriagelaw.cua.edu/law/states/AL.cfm
 // http://www.domawatch.org/stateissues/alaska/index.html
 // http://ballotpedia.org/wiki/index.php/Marriage-related_ballot_measures_and_initiatives
-type MarriageStatus = "Mar" | "CU" | "CULite" | "None" | "NoMar" | "NoCU" | "NoMarConst" | "NoCUConst";
+export type MarriageStatus = "Mar" | "CU" | "CULite" | "None" | "NoMar" | "NoCU" | "NoMarConst" | "NoCUConst";
 
-interface MarriageDate {
+export interface MarriageDate {
     year: number,
     month: number // 1-indexed
 };
 
-interface PendingMarriageStatusInfo {
+export interface PendingMarriageStatusInfo {
     clear: boolean,
     courtOverturnedBan: boolean,
     description: string | null
 }
 
-interface StateMarriageStatusUpdate {
+export interface StateMarriageStatusUpdate {
     date: MarriageDate,
     status: MarriageStatus,
     description: string,
     pendingInfo?: PendingMarriageStatusInfo
 }
 
-type AllMarriageData = Map<string, Array<StateMarriageStatusUpdate>>;
+export type AllMarriageData = Map<string, Array<StateMarriageStatusUpdate>>;
 
 export async function loadMarriageData(): Promise<AllMarriageData> {
     //TODO?
-    let response = await fetch("https://gregstoll.com/marriagemap/marriagedata.js");
+    let response = await fetch("data/marriagedata.js");
     let json = await response.json();
     return parseAllMarriageData(json); 
 }
 function parseAllMarriageData(json: any): AllMarriageData {
     let allMarriageData = new Map<string, Array<StateMarriageStatusUpdate>>();
-    for (let stateCode in Object.keys(json)) {
+    for (let stateCode of Object.keys(json)) {
         allMarriageData.set(stateCode, parseSingleStateData(json[stateCode]));
     }
     return allMarriageData;

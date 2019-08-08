@@ -5,6 +5,7 @@ import { loadMarriageData, MarriageDate, AllMarriageData, PendingMarriageStatusI
 import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
+import { JSXElement } from '@babel/types';
 
 interface AppState {
     marriageData: AllMarriageData,
@@ -58,6 +59,7 @@ class App extends Component<{}, AppState> {
     }
 
     onSliderDateChange(date: TickDateRange) {
+        // TODO - clear state?
         this.setState({ curDate: date });
     }
 
@@ -78,9 +80,9 @@ class App extends Component<{}, AppState> {
         this.setState({ marriageData: marriageData });
     }
     render() {
-        let monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
+        const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
         //TODO - calculate this better
-        let stateColors = new Map<string, string>();
+        const stateColors = new Map<string, string>();
         for (const [stateCode, allStateData] of this.state.marriageData) {
             //TODO - what to do for first one?
             let status: MarriageStatus = "None";
@@ -92,6 +94,10 @@ class App extends Component<{}, AppState> {
             }
             stateColors.set(stateCode, mapColors.get(status) as string);
         }
+        //TODO
+                //<img src="images/legend.png" style={{ position: "absolute", left: 1000, top: 400 }} />
+                //<div style={{ top: -189 }}>Date: {monthText} {this.state.curDate.endYear}</div>
+                //<div>Date: {monthText} {this.state.curDate.endYear}</div>
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
@@ -110,6 +116,11 @@ class App extends Component<{}, AppState> {
                     currentTickDateRange={this.state.curDate}
                     onTickDateRangeChange={date => this.onSliderDateChange(date)}
                 />
+                <StateDescriptions
+                    stateSelected={this.state.stateSelected}
+                    curDate={this.state.curDate}
+                    marriageData={this.state.marriageData}
+                    />
             </div>
         );
     }
@@ -125,6 +136,33 @@ class App extends Component<{}, AppState> {
         }
         // marriageDate is 1 indexed, curDate is 0 indexed
         return (marriageDate.month > curDate.endMonth + 1);
+    }
+}
+
+interface StateDescriptionsProps {
+    stateSelected: string | undefined,
+    marriageData: AllMarriageData,
+    curDate: TickDateRange,
+}
+
+class StateDescriptions extends Component<StateDescriptionsProps, {}> {
+    render() {
+        if (this.props.stateSelected) {
+            const updates = this.props.marriageData.get(this.props.stateSelected) as StateMarriageStatusUpdate[];
+            const entryArray = updates.map((update, index) => {
+                // TODO add link to set current date
+                // TODO - refactor the date to string
+                let description = "<a href=\"#\">" + new Date(update.date.year, update.date.month - 1).toLocaleDateString(undefined, { month: "long", year: "numeric" }) + "</a>";
+                // TODO - use black or white for text
+                description += ": <span style=\"background-color: " + mapColors.get(update.status) + "\">" + mapDescriptions.get(update.status) + "</span> - " + update.description;
+                return <li key={index} dangerouslySetInnerHTML={{ __html: description }}></li>
+            });
+            return <ul>{entryArray}</ul>;
+        }
+        else {
+            // TODO
+            return <div />;
+        }
     }
 }
 

@@ -16,9 +16,11 @@ interface AppState {
 
 const MAX_YEAR = new TickDateRange(2015, 5);
 const MIN_YEAR = new TickDateRange(1990, 2);
+const TICKS_PER_YEAR = 4;
+const BUCKET_SIZE = 12 / TICKS_PER_YEAR;
 
 
-let mapDescriptions = new Map<MarriageStatus, string>(Object.entries({
+const mapDescriptions = new Map<MarriageStatus, string>(Object.entries({
     "Mar": "Marriage is legal",
     "CU": "Civil unions are legal",
     "CULite": "Civil unions that have some rights included in marriage are legal",
@@ -28,7 +30,7 @@ let mapDescriptions = new Map<MarriageStatus, string>(Object.entries({
     "NoMarConst": "Marriage forbidden by state constitution",
     "NoCUConst": "Marriage or civil unions forbidden by state constitution"
 }) as Array<[MarriageStatus, string]>);
-let mapColors = new Map<MarriageStatus, string>(Object.entries({
+const mapColors = new Map<MarriageStatus, string>(Object.entries({
     //"Mar": "rgb(26, 152, 80)",
     "Mar": "rgb(20, 118, 255)",
     //"CU": "rgb(102, 189, 99)",
@@ -41,6 +43,11 @@ let mapColors = new Map<MarriageStatus, string>(Object.entries({
     "NoMarConst": "rgb(244, 109, 67)",
     "NoCUConst": "rgb(215, 48, 39)"
 }) as Array<[MarriageStatus, string]>);
+const stateNames = new Map<string, string>(Object.entries(
+    {
+        'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'
+    }) as Array<[string, string]>);
+
 class App extends Component<{}, AppState> {
     state: AppState = {
         marriageData: new Map<string, Array<StateMarriageStatusUpdate>>(),
@@ -98,6 +105,7 @@ class App extends Component<{}, AppState> {
                 //<img src="images/legend.png" style={{ position: "absolute", left: 1000, top: 400 }} />
                 //<div style={{ top: -189 }}>Date: {monthText} {this.state.curDate.endYear}</div>
                 //<div>Date: {monthText} {this.state.curDate.endYear}</div>
+        // TODO - state titles
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
@@ -110,7 +118,7 @@ class App extends Component<{}, AppState> {
                     onError={error => this.onMapError(error)} />
                 <div>Date: {monthText} {this.state.curDate.endYear}</div>
                 <DateSlider
-                    ticksPerYear={4}
+                    ticksPerYear={TICKS_PER_YEAR}
                     startTickDateRange={MIN_YEAR}
                     endTickDateRange={MAX_YEAR}
                     currentTickDateRange={this.state.curDate}
@@ -151,8 +159,7 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
             const updates = this.props.marriageData.get(this.props.stateSelected) as StateMarriageStatusUpdate[];
             const entryArray = updates.map((update, index) => {
                 // TODO add link to set current date
-                // TODO - refactor the date to string
-                let description = "<a href=\"#\">" + new Date(update.date.year, update.date.month - 1).toLocaleDateString(undefined, { month: "long", year: "numeric" }) + "</a>";
+                let description = "<a href=\"#\">" + this.dateToString(update.date) + "</a>";
                 // TODO - use black or white for text
                 description += ": <span style=\"background-color: " + mapColors.get(update.status) + "\">" + mapDescriptions.get(update.status) + "</span> - " + update.description;
                 return <li key={index} dangerouslySetInnerHTML={{ __html: description }}></li>
@@ -160,9 +167,39 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
             return <ul>{entryArray}</ul>;
         }
         else {
-            // TODO
-            return <div />;
+            const stateCodes : string[] = Array.from(this.props.marriageData.keys()).sort();
+            // ugh, 0-indexed to 1-indexed
+            const curMarriageDate = { year: this.props.curDate.endYear, month: this.props.curDate.endMonth + 1 };
+            const entryArray = [];
+            let count = 0;
+            for (const stateCode of stateCodes) {
+                const updates = this.props.marriageData.get(stateCode) as StateMarriageStatusUpdate[];
+                for (const update of updates) {
+                    if (this.inBucket(update.date, curMarriageDate)) {
+                        let description = `<a href="#">${stateNames.get(stateCode)}</a>: ${this.dateToString(update.date)}`;
+                        // TODO - use black or white for text
+                        // TODO - something about important ones?
+                        description += ": <span style=\"background-color: " + mapColors.get(update.status) + "\">" + mapDescriptions.get(update.status) + "</span> - " + update.description;
+                        entryArray.push(<li key={count} dangerouslySetInnerHTML={{ __html: description }}></li>);
+                        count++;
+                    }
+                }
+            }
+            return <ul>{entryArray}</ul>;
         }
+    }
+    dateToString(date: MarriageDate): string {
+        return (new Date(date.year, date.month - 1)).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+    }
+    inBucket(candidateDate: MarriageDate, curDate: MarriageDate): boolean {
+        if (candidateDate.year !== curDate.year) {
+            return false;
+        }
+        //TODO - optimize?
+        // month is 1-based
+        const candidateMonthBucket = Math.floor((candidateDate.month - 1) / BUCKET_SIZE);
+        const curMonthBucket = Math.floor((curDate.month - 1) / BUCKET_SIZE);
+        return candidateMonthBucket === curMonthBucket;
     }
 }
 

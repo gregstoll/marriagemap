@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { USStateMap, DateSlider, TickDateRange } from 'us-state-map';
 import { loadMarriageData, MarriageDate, AllMarriageData, PendingMarriageStatusInfo, StateMarriageStatusUpdate, MarriageStatus } from './DataHandling';
+import { JSXElement } from '@babel/types';
+import { isNullOrUndefined } from 'util';
 //import { Button } from 'semantic-ui-react';
+
 import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
-import { JSXElement } from '@babel/types';
+
+let parseColor = require('parse-color');
 
 interface AppState {
     marriageData: AllMarriageData,
@@ -57,17 +61,14 @@ class App extends Component<{}, AppState> {
     }
 
     onStateSelected(stateCode: string) {
-        //TODO
         this.setState({ stateSelected: stateCode });
     }
     onStateCleared() {
-        //TODO
         this.setState({ stateSelected: undefined });
     }
 
     onSliderDateChange(date: TickDateRange) {
-        // TODO - clear state?
-        this.setState({ curDate: date });
+        this.setState({ curDate: date, stateSelected: undefined });
     }
 
     onMapError(error: any) {
@@ -128,6 +129,8 @@ class App extends Component<{}, AppState> {
                     stateSelected={this.state.stateSelected}
                     curDate={this.state.curDate}
                     marriageData={this.state.marriageData}
+                    setSelectedState={stateCode => this.setState({ stateSelected: stateCode })}
+                    setCurDate={curDate => this.onSliderDateChange(this.marriageDateToTickDateRange(curDate))}
                     />
             </div>
         );
@@ -145,12 +148,19 @@ class App extends Component<{}, AppState> {
         // marriageDate is 1 indexed, curDate is 0 indexed
         return (marriageDate.month > curDate.endMonth + 1);
     }
+    marriageDateToTickDateRange(marriageDate: MarriageDate): TickDateRange {
+        // month is 1-based
+        const curMonthBucket = Math.floor((marriageDate.month - 1) / BUCKET_SIZE);
+        return new TickDateRange(marriageDate.year, (curMonthBucket + 1) * BUCKET_SIZE - 1);
+    }
 }
 
 interface StateDescriptionsProps {
     stateSelected: string | undefined,
     marriageData: AllMarriageData,
     curDate: TickDateRange,
+    setSelectedState: (stateCode: string) => void,
+    setCurDate: (curDate: MarriageDate) => void
 }
 
 class StateDescriptions extends Component<StateDescriptionsProps, {}> {
@@ -158,13 +168,10 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
         if (this.props.stateSelected) {
             const updates = this.props.marriageData.get(this.props.stateSelected) as StateMarriageStatusUpdate[];
             const entryArray = updates.map((update, index) => {
-                // TODO add link to set current date
-                let description = "<a href=\"#\">" + this.dateToString(update.date) + "</a>";
-                // TODO - use black or white for text
-                description += ": <span style=\"background-color: " + mapColors.get(update.status) + "\">" + mapDescriptions.get(update.status) + "</span> - " + update.description;
-                return <li key={index} dangerouslySetInnerHTML={{ __html: description }}></li>
+                return this.getDescriptionFromUpdate(update, index, undefined);
             });
-            return <ul>{entryArray}</ul>;
+            //TODO styling for h1
+            return <div><h1>{stateNames.get(this.props.stateSelected) as string}</h1><ul>{entryArray}</ul></div>;
         }
         else {
             const stateCodes : string[] = Array.from(this.props.marriageData.keys()).sort();
@@ -176,16 +183,42 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
                 const updates = this.props.marriageData.get(stateCode) as StateMarriageStatusUpdate[];
                 for (const update of updates) {
                     if (this.inBucket(update.date, curMarriageDate)) {
-                        let description = `<a href="#">${stateNames.get(stateCode)}</a>: ${this.dateToString(update.date)}`;
-                        // TODO - use black or white for text
-                        // TODO - something about important ones?
-                        description += ": <span style=\"background-color: " + mapColors.get(update.status) + "\">" + mapDescriptions.get(update.status) + "</span> - " + update.description;
-                        entryArray.push(<li key={count} dangerouslySetInnerHTML={{ __html: description }}></li>);
+                        entryArray.push(this.getDescriptionFromUpdate(update, count, stateCode));
                         count++;
                     }
                 }
             }
             return <ul>{entryArray}</ul>;
+        }
+    }
+    getDescriptionFromUpdate(update: StateMarriageStatusUpdate, index: number, stateCode: string | undefined): JSX.Element {
+        let prefix = null;
+        // TODO - something about important ones?
+        if (this.props.stateSelected) {
+            prefix = <button className="link-button" onClick={() => this.props.setCurDate(update.date)}>{ this.dateToString(update.date) }</ button>;
+        }
+        else {
+            prefix = <span><button className="link-button" onClick={() => this.props.setSelectedState(stateCode as string)}> {stateNames.get(stateCode as string)}</button>: {this.dateToString(update.date)}</span>;
+        }
+        let backgroundColor = mapColors.get(update.status) as string;
+        let foregroundColor = this.getLabelColor(backgroundColor);
+        return <li key={index}>
+            {prefix}: <span style={{ backgroundColor: backgroundColor, color: foregroundColor }}>{mapDescriptions.get(update.status)}</span> -
+            <span dangerouslySetInnerHTML={{ __html: update.description }}/>
+            </li>;
+    }
+    getLabelColor(backgroundColor: string): string {
+        let backgroundParsedColor = parseColor(backgroundColor);
+        // Used to use HSL, but I think this is more accurate
+        let rgb: number[] = backgroundParsedColor.rgb;
+        if (isNullOrUndefined(rgb)) {
+            return "#000";
+        }
+        let grayscale = 0.2989 * rgb[0] + 0.5870 * rgb[1] + 0.1140 * rgb[2];
+        if (grayscale > 0.5 * 255) {
+            return "#000";
+        } else {
+            return "#fff";
         }
     }
     dateToString(date: MarriageDate): string {

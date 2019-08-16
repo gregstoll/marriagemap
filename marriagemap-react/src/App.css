@@ -1,0 +1,18 @@
+/* https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/anchor-is-valid.md */
+
+.link-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline;
+    margin: 0;
+    padding: 0;
+
+    color: #4183c4;
+    text-decoration: none;
+}
+
+.link-button:hover,
+.link-button:focus {
+    text-decoration: none;
+}

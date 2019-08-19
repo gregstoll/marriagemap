@@ -16,3 +16,7 @@
 .link-button:focus {
     text-decoration: none;
 }
+
+li.importantEntry {
+    background-color: #ecf8b9;
+}

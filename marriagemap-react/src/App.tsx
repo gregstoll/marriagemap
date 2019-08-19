@@ -83,7 +83,6 @@ class App extends Component<{}, AppState> {
     }
 
     async componentDidMount() {
-        // TODO - load marriage data
         let marriageData = await loadMarriageData();
         this.setState({ marriageData: marriageData });
     }
@@ -91,8 +90,8 @@ class App extends Component<{}, AppState> {
         const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
         //TODO - calculate this better
         const stateColors = new Map<string, string>();
+        const stateTitles = new Map<string, string>();
         for (const [stateCode, allStateData] of this.state.marriageData) {
-            //TODO - what to do for first one?
             let status: MarriageStatus = "None";
             for (let curUpdate of allStateData) {
                 if (this.dateIsGreater(curUpdate.date, this.state.curDate)) {
@@ -101,17 +100,17 @@ class App extends Component<{}, AppState> {
                 status = curUpdate.status;
             }
             stateColors.set(stateCode, mapColors.get(status) as string);
+            stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
         //TODO
                 //<img src="images/legend.png" style={{ position: "absolute", left: 1000, top: 400 }} />
                 //<div style={{ top: -189 }}>Date: {monthText} {this.state.curDate.endYear}</div>
                 //<div>Date: {monthText} {this.state.curDate.endYear}</div>
-        // TODO - state titles
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
                     stateColors={stateColors}
-                    stateTitles={new Map<string, string>()}
+                    stateTitles={stateTitles}
                     stateSelectedCallback={stateCode => this.onStateSelected(stateCode)}
                     stateClearedCallback={() => this.onStateCleared()}
                     width={900}
@@ -168,41 +167,44 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
         if (this.props.stateSelected) {
             const updates = this.props.marriageData.get(this.props.stateSelected) as StateMarriageStatusUpdate[];
             const entryArray = updates.map((update, index) => {
-                return this.getDescriptionFromUpdate(update, index, undefined);
+                return this.getDescriptionFromUpdate(update, updates[index-1], index);
             });
-            //TODO styling for h1
+            //TODO styling for h1?
             return <div><h1>{stateNames.get(this.props.stateSelected) as string}</h1><ul>{entryArray}</ul></div>;
         }
         else {
             const stateCodes : string[] = Array.from(this.props.marriageData.keys()).sort();
             // ugh, 0-indexed to 1-indexed
             const curMarriageDate = { year: this.props.curDate.endYear, month: this.props.curDate.endMonth + 1 };
-            const entryArray = [];
+            const entryArray : Array<JSX.Element> = [];
             let count = 0;
             for (const stateCode of stateCodes) {
                 const updates = this.props.marriageData.get(stateCode) as StateMarriageStatusUpdate[];
+                let lastUpdate: StateMarriageStatusUpdate | undefined = undefined;
                 for (const update of updates) {
                     if (this.inBucket(update.date, curMarriageDate)) {
-                        entryArray.push(this.getDescriptionFromUpdate(update, count, stateCode));
+                        entryArray.push(this.getDescriptionFromUpdate(update, lastUpdate, count));
                         count++;
                     }
+                    lastUpdate = update;
                 }
             }
             return <ul>{entryArray}</ul>;
         }
     }
-    getDescriptionFromUpdate(update: StateMarriageStatusUpdate, index: number, stateCode: string | undefined): JSX.Element {
+    getDescriptionFromUpdate(update: StateMarriageStatusUpdate, previousUpdate: StateMarriageStatusUpdate | undefined, index: number): JSX.Element {
         let prefix = null;
-        // TODO - something about important ones?
         if (this.props.stateSelected) {
             prefix = <button className="link-button" onClick={() => this.props.setCurDate(update.date)}>{ this.dateToString(update.date) }</ button>;
         }
         else {
-            prefix = <span><button className="link-button" onClick={() => this.props.setSelectedState(stateCode as string)}> {stateNames.get(stateCode as string)}</button>: {this.dateToString(update.date)}</span>;
+            prefix = <span><button className="link-button" onClick={() => this.props.setSelectedState(update.stateCode)}> {stateNames.get(update.stateCode)}</button>: {this.dateToString(update.date)}</span>;
         }
-        let backgroundColor = mapColors.get(update.status) as string;
-        let foregroundColor = this.getLabelColor(backgroundColor);
-        return <li key={index}>
+        const backgroundColor = mapColors.get(update.status) as string;
+        const foregroundColor = this.getLabelColor(backgroundColor);
+        const isImportant = previousUpdate !== undefined && update.status !== previousUpdate.status;
+        const className = isImportant ? "importantEntry" : "";
+        return <li key={index} className={className}>
             {prefix}: <span style={{ backgroundColor: backgroundColor, color: foregroundColor }}>{mapDescriptions.get(update.status)}</span> -
             <span dangerouslySetInnerHTML={{ __html: update.description }}/>
             </li>;

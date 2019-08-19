@@ -26,6 +26,7 @@ export interface PendingMarriageStatusInfo {
 }
 
 export interface StateMarriageStatusUpdate {
+    stateCode: string,
     date: MarriageDate,
     status: MarriageStatus,
     description: string,
@@ -35,7 +36,6 @@ export interface StateMarriageStatusUpdate {
 export type AllMarriageData = Map<string, Array<StateMarriageStatusUpdate>>;
 
 export async function loadMarriageData(): Promise<AllMarriageData> {
-    //TODO?
     let response = await fetch("data/marriagedata.js");
     let json = await response.json();
     return parseAllMarriageData(json); 
@@ -43,21 +43,21 @@ export async function loadMarriageData(): Promise<AllMarriageData> {
 function parseAllMarriageData(json: any): AllMarriageData {
     let allMarriageData = new Map<string, Array<StateMarriageStatusUpdate>>();
     for (let stateCode of Object.keys(json)) {
-        allMarriageData.set(stateCode, parseSingleStateData(json[stateCode]));
+        allMarriageData.set(stateCode, parseSingleStateData(stateCode, json[stateCode]));
     }
     return allMarriageData;
 }
-function parseSingleStateData(json: any): Array<StateMarriageStatusUpdate> {
+function parseSingleStateData(stateCode: string, json: any): Array<StateMarriageStatusUpdate> {
     let data : Array<StateMarriageStatusUpdate> = [];
     //TODO - use map
     for (let i = 0; i < json.length; ++i) {
-        data.push(parseStateMarriageStatusUpdate(json[i]));
+        data.push(parseStateMarriageStatusUpdate(stateCode, json[i]));
     }
     return data;
 }
-function parseStateMarriageStatusUpdate(json: any): StateMarriageStatusUpdate {
+function parseStateMarriageStatusUpdate(stateCode: string, json: any): StateMarriageStatusUpdate {
     //TODO - parse pendingInfo
-    return { date: parseMarriageDate(json[0]), status: json[1], description: json[2] };
+    return { stateCode: stateCode, date: parseMarriageDate(json[0]), status: json[1], description: json[2] };
 }
 function parseMarriageDate(s: string): MarriageDate {
     let parts = s.split('-');

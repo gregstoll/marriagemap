@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { USStateMap, DateSlider, TickDateRange } from 'us-state-map';
-import { loadMarriageData, MarriageDate, AllMarriageData, PendingMarriageStatusInfo, StateMarriageStatusUpdate, MarriageStatus } from './DataHandling';
+import { loadMarriageData, MarriageDate, AllMarriageData, PendingMarriageStatusInfo, StateMarriageStatusUpdate, MarriageStatus, MarriageStatusEnum } from './DataHandling';
 import { JSXElement } from '@babel/types';
 import { isNullOrUndefined } from 'util';
 //import { Button } from 'semantic-ui-react';
@@ -22,6 +22,11 @@ const MAX_YEAR = new TickDateRange(2015, 5);
 const MIN_YEAR = new TickDateRange(1990, 2);
 const TICKS_PER_YEAR = 4;
 const BUCKET_SIZE = 12 / TICKS_PER_YEAR;
+const ONE_BASED_MONTH_TO_BUCKET = [-1];
+for (let i = 1; i <= 12; ++i) {
+    const bucket = Math.floor((i - 1) / BUCKET_SIZE);
+    ONE_BASED_MONTH_TO_BUCKET.push(bucket);
+}
 
 
 const mapDescriptions = new Map<MarriageStatus, string>(Object.entries({
@@ -88,7 +93,7 @@ class App extends Component<{}, AppState> {
     }
     render() {
         const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
-        //TODO - calculate this better
+        //TODO - could do some sort of binary search here
         const stateColors = new Map<string, string>();
         const stateTitles = new Map<string, string>();
         for (const [stateCode, allStateData] of this.state.marriageData) {
@@ -116,6 +121,7 @@ class App extends Component<{}, AppState> {
                     width={900}
                     height={500}
                     onError={error => this.onMapError(error)} />
+                <MarriageMapLegend />
                 <div>Date: {monthText} {this.state.curDate.endYear}</div>
                 <DateSlider
                     ticksPerYear={TICKS_PER_YEAR}
@@ -124,6 +130,9 @@ class App extends Component<{}, AppState> {
                     currentTickDateRange={this.state.curDate}
                     onTickDateRangeChange={date => this.onSliderDateChange(date)}
                 />
+                <div><label>Cartogram:&nbsp;
+                    <input type="checkbox" checked={this.state.isCartogram} onChange={event => this.setState({ isCartogram: event.currentTarget.checked })}/></label>
+                </div>
                 <StateDescriptions
                     stateSelected={this.state.stateSelected}
                     curDate={this.state.curDate}
@@ -149,7 +158,7 @@ class App extends Component<{}, AppState> {
     }
     marriageDateToTickDateRange(marriageDate: MarriageDate): TickDateRange {
         // month is 1-based
-        const curMonthBucket = Math.floor((marriageDate.month - 1) / BUCKET_SIZE);
+        const curMonthBucket = ONE_BASED_MONTH_TO_BUCKET[marriageDate.month - 1];
         return new TickDateRange(marriageDate.year, (curMonthBucket + 1) * BUCKET_SIZE - 1);
     }
 }
@@ -169,7 +178,6 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
             const entryArray = updates.map((update, index) => {
                 return this.getDescriptionFromUpdate(update, updates[index-1], index);
             });
-            //TODO styling for h1?
             return <div><h1>{stateNames.get(this.props.stateSelected) as string}</h1><ul>{entryArray}</ul></div>;
         }
         else {
@@ -181,6 +189,7 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
             for (const stateCode of stateCodes) {
                 const updates = this.props.marriageData.get(stateCode) as StateMarriageStatusUpdate[];
                 let lastUpdate: StateMarriageStatusUpdate | undefined = undefined;
+                //TODO - could do some kind of binary search here, I guess
                 for (const update of updates) {
                     if (this.inBucket(update.date, curMarriageDate)) {
                         entryArray.push(this.getDescriptionFromUpdate(update, lastUpdate, count));
@@ -230,11 +239,26 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
         if (candidateDate.year !== curDate.year) {
             return false;
         }
-        //TODO - optimize?
         // month is 1-based
-        const candidateMonthBucket = Math.floor((candidateDate.month - 1) / BUCKET_SIZE);
-        const curMonthBucket = Math.floor((curDate.month - 1) / BUCKET_SIZE);
+        const candidateMonthBucket = ONE_BASED_MONTH_TO_BUCKET[candidateDate.month];
+        const curMonthBucket = ONE_BASED_MONTH_TO_BUCKET[curDate.month];
         return candidateMonthBucket === curMonthBucket;
+    }
+}
+
+class MarriageMapLegend extends Component<{}, {}> {
+    render() {
+        // https://stackoverflow.com/questions/21293063/how-to-programmatically-enumerate-an-enum-type
+        const marriageStatusNames = Object.keys(MarriageStatusEnum)
+            .filter(k => typeof MarriageStatusEnum[k as any] === "number") as MarriageStatus[];
+        const colorBoxes = marriageStatusNames.map((value, index) => {
+            return <rect key={"colorBox" + index} y={(10 + 4) * (index)} height={10} width={10} fill={mapColors.get(value) as string} />;
+        });
+        //TODO - fix positioning for non-cartogram
+        return <svg style={{ position: "absolute", left: 1000, top: 400 }}>
+            {colorBoxes}
+            <image x={15} href="images/legend.png" width="189" height="109" />
+            </svg>;
     }
 }
 

@@ -1,3 +1,11 @@
+/* Force vertical scrollbar to appear so that the map doesn't jump back
+    and forth horizontally when scrollbar appears/disappears (since the map
+    is centered horizontally)
+*/
+body {
+    overflow-y: scroll;
+}
+
 /* https://github.com/evcohen/eslint-plugin-jsx-a11y/blob/master/docs/rules/anchor-is-valid.md */
 
 .link-button {

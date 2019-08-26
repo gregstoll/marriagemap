@@ -12,7 +12,19 @@
 // http://marriagelaw.cua.edu/law/states/AL.cfm
 // http://www.domawatch.org/stateissues/alaska/index.html
 // http://ballotpedia.org/wiki/index.php/Marriage-related_ballot_measures_and_initiatives
-export type MarriageStatus = "Mar" | "CU" | "CULite" | "None" | "NoMar" | "NoCU" | "NoMarConst" | "NoCUConst";
+export enum MarriageStatusEnum {
+    Mar = 0,
+    CU,
+    CULite,
+    None,
+    NoMar,
+    NoCU,
+    NoMarConst,
+    NoCUConst
+}
+//export type MarriageStatus = "Mar" | "CU" | "CULite" | "None" | "NoMar" | "NoCU" | "NoMarConst" | "NoCUConst";
+// https://www.typescriptlang.org/docs/handbook/enums.html
+export type MarriageStatus = keyof typeof MarriageStatusEnum;
 
 export interface MarriageDate {
     year: number,

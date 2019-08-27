@@ -121,7 +121,7 @@ class App extends Component<{}, AppState> {
                     width={900}
                     height={500}
                     onError={error => this.onMapError(error)} />
-                <MarriageMapLegend />
+                <MarriageMapLegend isCartogram={this.state.isCartogram} />
                 <div>Date: {monthText} {this.state.curDate.endYear}</div>
                 <DateSlider
                     ticksPerYear={TICKS_PER_YEAR}
@@ -246,7 +246,10 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
     }
 }
 
-class MarriageMapLegend extends Component<{}, {}> {
+interface MarriageMapLegendProps {
+    isCartogram: boolean,
+}
+class MarriageMapLegend extends Component<MarriageMapLegendProps, {}> {
     render() {
         // https://stackoverflow.com/questions/21293063/how-to-programmatically-enumerate-an-enum-type
         const marriageStatusNames = Object.keys(MarriageStatusEnum)
@@ -254,8 +257,15 @@ class MarriageMapLegend extends Component<{}, {}> {
         const colorBoxes = marriageStatusNames.map((value, index) => {
             return <rect key={"colorBox" + index} y={(10 + 4) * (index)} height={10} width={10} fill={mapColors.get(value) as string} />;
         });
+        let svgStyle: React.CSSProperties = { position: "absolute" };
+        if (this.props.isCartogram) {
+            svgStyle = { ...svgStyle, left: 1000, top: 400 };
+        }
+        else {
+            svgStyle = { ...svgStyle, left: 1020, top: 420 };
+        }
         //TODO - fix positioning for non-cartogram
-        return <svg style={{ position: "absolute", left: 1000, top: 400 }}>
+        return <svg style={svgStyle}>
             {colorBoxes}
             <image x={15} href="images/legend.png" width="189" height="109" />
             </svg>;

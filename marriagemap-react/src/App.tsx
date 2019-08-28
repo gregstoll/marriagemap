@@ -92,6 +92,7 @@ class App extends Component<{}, AppState> {
         this.setState({ marriageData: marriageData });
     }
     render() {
+        //TODO - hash fragment and whatnot
         const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
         //TODO - could do some sort of binary search here
         const stateColors = new Map<string, string>();
@@ -107,10 +108,6 @@ class App extends Component<{}, AppState> {
             stateColors.set(stateCode, mapColors.get(status) as string);
             stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
-        //TODO
-                //<img src="images/legend.png" style={{ position: "absolute", left: 1000, top: 400 }} />
-                //<div style={{ top: -189 }}>Date: {monthText} {this.state.curDate.endYear}</div>
-                //<div>Date: {monthText} {this.state.curDate.endYear}</div>
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}

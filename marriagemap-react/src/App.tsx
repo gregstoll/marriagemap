@@ -58,11 +58,40 @@ const stateNames = new Map<string, string>(Object.entries(
     }) as Array<[string, string]>);
 
 class App extends Component<{}, AppState> {
-    state: AppState = {
-        marriageData: new Map<string, Array<StateMarriageStatusUpdate>>(),
-        curDate: MAX_YEAR,
-        stateSelected: undefined,
-        isCartogram: true,
+    state: AppState;
+    constructor(props: {}) {
+        super(props);
+        this.state = {
+            marriageData: new Map<string, Array<StateMarriageStatusUpdate>>(),
+            curDate: MAX_YEAR,
+            stateSelected: undefined,
+            isCartogram: true,
+        }
+        // TODO - respond when hash changes (like back button)
+        if (window.location.hash) {
+            const hashVals = window.location.hash.substr(1).split('&').map(x => x.split('='));
+            //let newState : Partial<AppState> = {};
+            for (const keyAndValue of hashVals) {
+                if (keyAndValue.length === 2) {
+                    const key = keyAndValue[0];
+                    const value = keyAndValue[1];
+                    switch (key) {
+                        case "year":
+                            const yearParts = value.split('-').map(s => parseInt(s, 10));
+                            if (yearParts.length === 2) {
+                                this.state.curDate = new TickDateRange(yearParts[0], yearParts[1]);
+                            }
+                            break;
+                        case "state":
+                            this.state.stateSelected = value;
+                            break;
+                        case "cartogram":
+                            this.state.isCartogram = value !== "0";
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     onStateSelected(stateCode: string) {
@@ -91,8 +120,19 @@ class App extends Component<{}, AppState> {
         let marriageData = await loadMarriageData();
         this.setState({ marriageData: marriageData });
     }
+    updateLocationHash() {
+        let hashParts = [];
+        // don't set year, I guess
+        if (this.state.stateSelected !== undefined) {
+            hashParts.push(`state=${this.state.stateSelected}`);
+        }
+        if (!this.state.isCartogram) {
+            hashParts.push("cartogram=0");
+        }
+        window.location.hash = hashParts.join('&');
+    }
     render() {
-        //TODO - hash fragment and whatnot
+        this.updateLocationHash();
         const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
         //TODO - could do some sort of binary search here
         const stateColors = new Map<string, string>();
@@ -105,9 +145,13 @@ class App extends Component<{}, AppState> {
                 }
                 status = curUpdate.status;
             }
+            //TODO - rainbow gradient for state-overturned bans
+            // see https://github.com/gregstoll/usStateMap/issues/4
             stateColors.set(stateCode, mapColors.get(status) as string);
             stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
+        //TODO - make slider longer?
+        // https://github.com/gregstoll/usStateMap/issues/5
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
@@ -170,6 +214,10 @@ interface StateDescriptionsProps {
 
 class StateDescriptions extends Component<StateDescriptionsProps, {}> {
     render() {
+        if (this.props.marriageData.size === 0) {
+            // still loading data...
+            return <div />;
+        }
         if (this.props.stateSelected) {
             const updates = this.props.marriageData.get(this.props.stateSelected) as StateMarriageStatusUpdate[];
             const entryArray = updates.map((update, index) => {
@@ -211,8 +259,8 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
         const isImportant = previousUpdate !== undefined && update.status !== previousUpdate.status;
         const className = isImportant ? "importantEntry" : "";
         return <li key={index} className={className}>
-            {prefix}: <span style={{ backgroundColor: backgroundColor, color: foregroundColor }}>{mapDescriptions.get(update.status)}</span> -
-            <span dangerouslySetInnerHTML={{ __html: update.description }}/>
+            {prefix}: <span style={{ backgroundColor: backgroundColor, color: foregroundColor }}>{mapDescriptions.get(update.status)}</span>
+            &nbsp;-&nbsp;<span dangerouslySetInnerHTML={{ __html: update.description }}/>
             </li>;
     }
     getLabelColor(backgroundColor: string): string {
@@ -261,7 +309,6 @@ class MarriageMapLegend extends Component<MarriageMapLegendProps, {}> {
         else {
             svgStyle = { ...svgStyle, left: 1020, top: 420 };
         }
-        //TODO - fix positioning for non-cartogram
         return <svg style={svgStyle}>
             {colorBoxes}
             <image x={15} href="images/legend.png" width="189" height="109" />

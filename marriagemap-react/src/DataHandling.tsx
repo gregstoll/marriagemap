@@ -64,7 +64,6 @@ function parseAllMarriageData(json: any): AllMarriageData {
 }
 function parseSingleStateData(stateCode: string, json: any): Array<StateMarriageStatusUpdate> {
     let data : Array<StateMarriageStatusUpdate> = [];
-    //TODO - use map
     for (let i = 0; i < json.length; ++i) {
         data.push(parseStateMarriageStatusUpdate(stateCode, json[i]));
     }

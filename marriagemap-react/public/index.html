@@ -13,7 +13,7 @@
     <ssibodytop/>
     <div class="container">
         <h1>Same-sex marriage in the United States</h1>
-        <div id="root"/>
+        <div id="root"></div>
         <p>Also available <a href="http://apps.microsoft.com/webpdp/en-us/app/marriage-map/f5f57402-2472-4fc4-a27a-0320fb6294d9">on the Windows Store</a>, on the Windows Phone Marketplace: <a href="http://www.windowsphone.com/s?appid=07d33830-0e19-42b9-b371-abed7f1fcebe"><img src="DownloadWPSmall.png" title="Download it on the Windows Phone Marketplace" alt="Download it on the Windows Phone Marketplace"></a>, and on the HP TouchPad: <a href="http://developer.palm.com/appredirect/?packageid=com.gregstoll.marriagemap"><img alt="Download it on the HP App Catalog" title="Download it on the HP App Catalog" src="appcatalog.png"></a></p>
         <p>Here's <a href="http://terrymun.com/playground/data-in-equality/">another nice visualization</a> based on this data - check it out!</p>
         <h1 id="faq" style="clear: both;">FAQ:</h1>
@@ -23,7 +23,6 @@
                 legality of same-sex (gay) marriage and civil unions in the United States.
             </li>
             <li><b>How can I find more information about a state?</b> Click on the state to get a timeline of important events regarding same-sex marriage law.</li>
-            <li><b>I'm having some trouble telling the colors apart.</b> Click on a category in the legend to have those states flash briefly.</li>
             <li>
                 <b>What's a cartogram?</b> A cartogram is a kind of map that shows states
                 roughly in proportion to their population, and so it's more representative
@@ -52,9 +51,60 @@
         </ul>
         <p>Map colors based on <a href="http://www.ColorBrewer.org">www.ColorBrewer.org</a>, by Cynthia A. Brewer, Penn State.</p>
 
-        <!-- TODO - interesting -->
-        <!--<p><button onclick="saveCanvasImage();">generate image (only works in Firefox)</button></p>
-        <p><img id="exportCanvasImg" src="#" alt="generated image"></p>-->
+        <script>
+            var oldURL = undefined;
+            function copyStylesInline(destinationNode, sourceNode) {
+                var containerElements = ["svg", "g"];
+                for (var cd = 0; cd < destinationNode.childNodes.length; cd++) {
+                    var child = destinationNode.childNodes[cd];
+                    if (containerElements.indexOf(child.tagName) != -1) {
+                        copyStylesInline(child, sourceNode.childNodes[cd]);
+                        continue;
+                    }
+                    var style = sourceNode.childNodes[cd].currentStyle || window.getComputedStyle(sourceNode.childNodes[cd]);
+                    if (style == "undefined" || style == null) continue;
+                    for (var st = 0; st < style.length; st++) {
+                        child.style.setProperty(style[st], style.getPropertyValue(style[st]));
+                    }
+                }
+            }
+            function getSvgText(svg, child) {
+                var copy = svg.cloneNode(true);
+                copy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                copyStylesInline(copy, svg);
+                //TODO - get the child working (for the legend)
+                //var childCopy = child.cloneNode(true);
+                //childCopy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                //copyStylesInline(childCopy, child);
+                //copy.appendChild(childCopy);
+                return (new XMLSerializer()).serializeToString(copy);
+            }
+            function saveCanvasImage() {
+                var root = document.getElementById('root');
+                var svgs = root.getElementsByTagName('svg');
+                // https://stackoverflow.com/questions/20207924/how-can-i-convert-an-svg-node-to-png-and-download-it-to-the-user
+                // https://stackoverflow.com/a/44769098/118417
+                //TODO - legend is in svg[1]
+                var mapSvgElem = svgs[0];
+                var legendSvgElem = svgs[1];
+                var blob = new Blob([getSvgText(mapSvgElem, legendSvgElem)], { type: "image/svg+xml;charset=utf-8" });
+                var url = URL.createObjectURL(blob);
+
+                var img = document.getElementById('exportCanvasImg');
+                var bbox = mapSvgElem.getBBox();
+                img.setAttribute("width", bbox.width);
+                img.setAttribute("height", bbox.height);
+                img.onload = function () {
+                    if (oldUrl !== undefined) {
+                        URL.revokeObjectURL(oldUrl);
+                    }
+                    oldUrl = url;
+                }
+                img.src = url;
+            }
+        </script>
+        <p><button onclick="saveCanvasImage();">generate image</button></p>
+        <p><img width="500" height="500" id="exportCanvasImg" src="#" alt="generated image"></p>
         <ssibodybottom/>
     </div>
 </body>

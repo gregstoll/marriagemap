@@ -1,0 +1,1 @@
+../marriagemap-react/build/service-worker.js

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys, os, re
 
@@ -9,7 +9,7 @@ for l in f.readlines():
     if areaMatch:
         match = areaMatch.group(1)
         matchCoords = [str(int(x) + (int(x)/50)) for x in match.split(',')]
-        print l[:areaMatch.start(0)] + 'coords="' + ','.join(matchCoords) + '"' + l[areaMatch.end(0):-1]
+        print(l[:areaMatch.start(0)] + 'coords="' + ','.join(matchCoords) + '"' + l[areaMatch.end(0):-1])
 
 
 f.close()

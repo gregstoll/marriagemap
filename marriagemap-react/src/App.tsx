@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { USStateMap, DateSlider, TickDateRange } from 'us-state-map';
-import { loadMarriageData, MarriageDate, AllMarriageData, PendingMarriageStatusInfo, StateMarriageStatusUpdate, MarriageStatus, MarriageStatusEnum } from './DataHandling';
-import { JSXElement } from '@babel/types';
+import { loadMarriageData, MarriageDate, AllMarriageData, StateMarriageStatusUpdate, MarriageStatus, MarriageStatusEnum } from './DataHandling';
 import { isNullOrUndefined } from 'util';
-//import { Button } from 'semantic-ui-react';
 
 import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';

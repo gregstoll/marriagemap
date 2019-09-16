@@ -8,6 +8,7 @@ import { isNullOrUndefined } from 'util';
 import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
+import { DateSliderSpeedEnum } from 'us-state-map/dist/DateSlider';
 
 let parseColor = require('parse-color');
 
@@ -150,8 +151,6 @@ class App extends Component<{}, AppState> {
             stateColors.set(stateCode, mapColors.get(status) as string);
             stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
-        //TODO - make slider longer?
-        // https://github.com/gregstoll/usStateMap/issues/5
         return (
             <div style={{ width: 900, margin: "15px auto" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
@@ -164,12 +163,15 @@ class App extends Component<{}, AppState> {
                     onError={error => this.onMapError(error)} />
                 <MarriageMapLegend isCartogram={this.state.isCartogram} />
                 <div>Date: {monthText} {this.state.curDate.endYear}</div>
+                {/* Use empty cssProps so the slider grows to the size of its container */}
                 <DateSlider
                     ticksPerYear={TICKS_PER_YEAR}
                     startTickDateRange={MIN_YEAR}
                     endTickDateRange={MAX_YEAR}
                     currentTickDateRange={this.state.curDate}
                     onTickDateRangeChange={date => this.onSliderDateChange(date)}
+                    initialSpeed={DateSliderSpeedEnum.Fast}
+                    cssProps={{}}
                 />
                 <div><label>Cartogram:&nbsp;
                     <input type="checkbox" checked={this.state.isCartogram} onChange={event => this.setState({ isCartogram: event.currentTarget.checked })}/></label>

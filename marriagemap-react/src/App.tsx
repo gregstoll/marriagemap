@@ -149,8 +149,10 @@ class App extends Component<{}, AppState> {
             stateColors.set(stateCode, mapColors.get(status) as string);
             stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
+        /* Use "position: relative" here so MarriageMapLegend (which has position: "absolute")
+           will use this div as its "closest positioned ancestor" */
         return (
-            <div style={{ width: 900, margin: "15px auto" }}>
+            <div style={{ width: 900, margin: "15px auto", position: "relative" }}>
                 <USStateMap isCartogram={this.state.isCartogram}
                     stateColors={stateColors}
                     stateTitles={stateTitles}
@@ -304,10 +306,10 @@ class MarriageMapLegend extends Component<MarriageMapLegendProps, {}> {
         });
         let svgStyle: React.CSSProperties = { position: "absolute" };
         if (this.props.isCartogram) {
-            svgStyle = { ...svgStyle, left: 1000, top: 400 };
+            svgStyle = { ...svgStyle, left: 670, top: 360 };
         }
         else {
-            svgStyle = { ...svgStyle, left: 1020, top: 420 };
+            svgStyle = { ...svgStyle, left: 720, top: 380 };
         }
         return <svg style={svgStyle}>
             {colorBoxes}

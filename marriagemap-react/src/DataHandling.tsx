@@ -35,9 +35,9 @@ export interface MarriageDate {
 };
 
 export interface PendingMarriageStatusInfo {
-    clear: boolean,
-    courtOverturnedBan: boolean,
-    description: string | null
+    clear?: boolean,
+    courtOverturnedBan?: boolean,
+    description?: string
 }
 
 export interface StateMarriageStatusUpdate {
@@ -70,8 +70,25 @@ function parseSingleStateData(stateCode: string, json: any): Array<StateMarriage
     return data;
 }
 function parseStateMarriageStatusUpdate(stateCode: string, json: any): StateMarriageStatusUpdate {
-    //TODO - parse pendingInfo
-    return { stateCode: stateCode, date: parseMarriageDate(json[0]), status: json[1], description: json[2] };
+    let update : StateMarriageStatusUpdate = { stateCode: stateCode, date: parseMarriageDate(json[0]), status: json[1], description: json[2] };
+    if (json.length > 3) {
+        let extraJson = json[3];
+        let pendingJson = extraJson.pending;
+        if (pendingJson !== undefined) {
+            let pending : PendingMarriageStatusInfo = {};
+            if (pendingJson.description !== undefined) {
+                pending.description = pendingJson.description as string;
+            }
+            if (pendingJson.courtOverturnedBan !== undefined) {
+                pending.courtOverturnedBan = (pendingJson.courtOverturnedBan as number) !== 0;
+            }
+            if (pendingJson.clear !== undefined) {
+                pending.clear = (pendingJson.clear as number) !== 0;
+            }
+            update.pendingInfo = pending;
+        }
+    }
+    return update;
 }
 function parseMarriageDate(s: string): MarriageDate {
     let parts = s.split('-');

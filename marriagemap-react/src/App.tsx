@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { USStateMap, DateSlider, TickDateRange } from 'us-state-map';
+import { USStateMap, DateSlider, TickDateRange, ColorGradient } from 'us-state-map';
 import { loadMarriageData, MarriageDate, AllMarriageData, StateMarriageStatusUpdate, MarriageStatus, MarriageStatusEnum } from './DataHandling';
 import { isNullOrUndefined } from 'util';
 
@@ -7,6 +7,7 @@ import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import { DateSliderSpeedEnum } from 'us-state-map/dist/DateSlider';
+import { GradientDirection } from 'us-state-map/dist/USStateMap';
 
 let parseColor = require('parse-color');
 
@@ -15,6 +16,7 @@ interface AppState {
     curDate: TickDateRange,
     stateSelected: string | undefined,
     isCartogram: boolean,
+    rainbowColor: boolean
 }
 
 const MAX_YEAR = new TickDateRange(2015, 5);
@@ -65,6 +67,7 @@ class App extends Component<{}, AppState> {
             curDate: MAX_YEAR,
             stateSelected: undefined,
             isCartogram: true,
+            rainbowColor: true
         }
         // TODO - respond when hash changes (like back button)
         if (window.location.hash) {
@@ -133,20 +136,34 @@ class App extends Component<{}, AppState> {
     render() {
         this.updateLocationHash();
         const monthText = ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"][((this.state.curDate.endMonth + 1) / 3) - 1];
-        //TODO - could do some sort of binary search here
-        const stateColors = new Map<string, string>();
+        const stateColors = new Map<string, string | ColorGradient>();
         const stateTitles = new Map<string, string>();
         for (const [stateCode, allStateData] of this.state.marriageData) {
             let status: MarriageStatus = "None";
+            let courtOverturnedBan = false;
             for (let curUpdate of allStateData) {
                 if (this.dateIsGreater(curUpdate.date, this.state.curDate)) {
                     break;
                 }
                 status = curUpdate.status;
+                if (curUpdate.pendingInfo !== undefined) {
+                    if (curUpdate.pendingInfo.courtOverturnedBan !== undefined) {
+                        courtOverturnedBan = curUpdate.pendingInfo.courtOverturnedBan as boolean;
+                    }
+                    if (curUpdate.pendingInfo.clear === true) {
+                        courtOverturnedBan = false;
+                    }
+                }
             }
-            //TODO - rainbow gradient for state-overturned bans
-            // see https://github.com/gregstoll/usStateMap/issues/4
-            stateColors.set(stateCode, mapColors.get(status) as string);
+            const color = mapColors.get(status) as string;
+            if (courtOverturnedBan && this.state.rainbowColor) {
+                // use a rainbow gradient for state-overturned bans
+                const gradient = new ColorGradient(color, mapColors.get("Mar") as string, GradientDirection.Right, 0.4);
+                stateColors.set(stateCode, gradient);
+            }
+            else {
+                stateColors.set(stateCode, color);
+            }
             stateTitles.set(stateCode, mapDescriptions.get(status) as string);
         }
         /* Use "position: relative" here so MarriageMapLegend (which has position: "absolute")
@@ -175,6 +192,9 @@ class App extends Component<{}, AppState> {
                 />
                 <div><label>Cartogram:&nbsp;
                     <input type="checkbox" checked={this.state.isCartogram} onChange={event => this.setState({ isCartogram: event.currentTarget.checked })}/></label>
+                </div>
+                <div><label>Rainbow color for court-overturned bans:&nbsp;
+                    <input type="checkbox" checked={this.state.rainbowColor} onChange={event => this.setState({ rainbowColor: event.currentTarget.checked })}/></label>
                 </div>
                 <StateDescriptions
                     stateSelected={this.state.stateSelected}

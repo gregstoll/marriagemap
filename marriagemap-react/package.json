@@ -9,7 +9,7 @@
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "immer": ">=9.0.6",
-    "node-forge": ">=0.10.0",
+    "node-forge": ">=1.0.0",
     "parse-color": "^1.0.0",
     "postcss": ">=8.2.10",
     "react": "^17.0.1",

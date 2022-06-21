@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { USStateMap, DateSlider, TickDateRange, ColorGradient } from 'us-state-map';
 import { loadMarriageData, MarriageDate, AllMarriageData, StateMarriageStatusUpdate, MarriageStatus, MarriageStatusEnum } from './DataHandling';
-import { isNullOrUndefined } from 'util';
 
 import 'rc-slider/assets/index.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -289,7 +288,7 @@ class StateDescriptions extends Component<StateDescriptionsProps, {}> {
         let backgroundParsedColor = parseColor(backgroundColor);
         // Used to use HSL, but I think this is more accurate
         let rgb: number[] = backgroundParsedColor.rgb;
-        if (isNullOrUndefined(rgb)) {
+        if (rgb === null || rgb === undefined) {
             return "#000";
         }
         let grayscale = 0.2989 * rgb[0] + 0.5870 * rgb[1] + 0.1140 * rgb[2];
